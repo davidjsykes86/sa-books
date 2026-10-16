@@ -12,6 +12,18 @@
       "required": true
     },
     {
+      "fieldname": "vatType",
+      "label": "VAT Type",
+      "fieldtype": "Select",
+      "options": [
+        { "value": "STD", "label": "Standard rated" },
+        { "value": "ZERO", "label": "Zero-rated (local)" },
+        { "value": "EXPORT", "label": "Zero-rated (export)" },
+        { "value": "EXEMPT", "label": "Exempt" },
+        { "value": "CAPITAL", "label": "Capital goods" }
+      ]
+    },
+    {
       "fieldname": "details",
       "label": "Details",
       "fieldtype": "Table",
@@ -20,5 +32,5 @@
     }
   ],
   "keywordFields": ["name"],
-  "quickEditFields": ["details"]
+  "quickEditFields": ["vatType", "details"]
 }

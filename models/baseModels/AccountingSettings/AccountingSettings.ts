@@ -14,6 +14,7 @@ import { InventorySettings } from 'models/inventory/InventorySettings';
 import { ModelNameEnum } from 'models/types';
 import { createDiscountAccount } from 'src/setup/setupInstance';
 import { getCountryInfo } from 'utils/misc';
+import { setupSAVat } from './saVatSetup';
 
 export class AccountingSettings extends Doc {
   enableDiscounting?: boolean;
@@ -133,6 +134,14 @@ export class AccountingSettings extends Doc {
   };
 
   async change(ch: ChangeArg) {
+    if (
+      ch.changed === 'vatRegistered' &&
+      this.vatRegistered &&
+      this.isSouthAfrica
+    ) {
+      await setupSAVat(this.fyo);
+    }
+
     const discountingEnabled =
       ch.changed === 'enableDiscounting' && this.enableDiscounting;
     const discountAccountNotSet = !this.discountAccount;
