@@ -8,6 +8,8 @@ import {
   ValidationMap,
 } from 'fyo/model/types';
 import { validateEmail } from 'fyo/model/validationFunction';
+import { DocValue } from 'fyo/core/types';
+import { ValidationError } from 'fyo/utils/errors';
 import { InventorySettings } from 'models/inventory/InventorySettings';
 import { ModelNameEnum } from 'models/types';
 import { createDiscountAccount } from 'src/setup/setupInstance';
@@ -29,6 +31,18 @@ export class AccountingSettings extends Doc {
   enablePartialPayment?: boolean;
   enableitemGroup?: boolean;
 
+  // South Africa
+  companyRegNo?: string;
+  vatRegistered?: boolean;
+  vatNumber?: string;
+  vatRegistrationDate?: Date;
+  vatCategory?: 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+  vatBasis?: 'Invoice' | 'Payments';
+
+  get isSouthAfrica(): boolean {
+    return this.fyo.singles.SystemSettings?.countryCode === 'za';
+  }
+
   static filters: FiltersMap = {
     writeOffAccount: () => ({
       isGroup: false,
@@ -46,6 +60,28 @@ export class AccountingSettings extends Doc {
 
   validations: ValidationMap = {
     email: validateEmail,
+    vatNumber: (value: DocValue) => {
+      if (!value) {
+        return;
+      }
+      const v = String(value).trim();
+      if (!/^4\d{9}$/.test(v)) {
+        throw new ValidationError(
+          this.fyo.t`VAT number must be 10 digits starting with 4.`
+        );
+      }
+    },
+    companyRegNo: (value: DocValue) => {
+      if (!value) {
+        return;
+      }
+      const v = String(value).trim();
+      if (!/^\d{4}\/\d{6}\/\d{2}$/.test(v)) {
+        throw new ValidationError(
+          this.fyo.t`Registration number must look like 2026/123456/07.`
+        );
+      }
+    },
   };
 
   static lists: ListsMap = {
@@ -86,6 +122,14 @@ export class AccountingSettings extends Doc {
       !this.fyo.singles.AccountingSettings?.enableDiscounting,
     enableCouponCode: () =>
       !this.fyo.singles.AccountingSettings?.enablePricingRule,
+
+    // South Africa
+    companyRegNo: () => !this.isSouthAfrica,
+    vatRegistered: () => !this.isSouthAfrica,
+    vatNumber: () => !this.isSouthAfrica || !this.vatRegistered,
+    vatRegistrationDate: () => !this.isSouthAfrica || !this.vatRegistered,
+    vatCategory: () => !this.isSouthAfrica || !this.vatRegistered,
+    vatBasis: () => !this.isSouthAfrica || !this.vatRegistered,
   };
 
   async change(ch: ChangeArg) {
