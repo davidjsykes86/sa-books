@@ -23,6 +23,10 @@ export function getCOAList() {
   return [
     { name: t`Standard Chart of Accounts`, countryCode: '' },
 
+    // South Africa (first 'za' entry is the default for SA companies)
+    { countryCode: 'za', name: 'South Africa - General (Pastel)' },
+    { countryCode: 'za-medical', name: 'South Africa - Medical & Dental (Pastel)' },
+
     { countryCode: 'ae', name: 'U.A.E - Chart of Accounts' },
     {
       countryCode: 'ca',
@@ -37,21 +41,6 @@ export function getCOAList() {
     { countryCode: 'nl', name: 'Netherlands - Grootboekschema' },
     { countryCode: 'sg', name: 'Singapore - Chart of Accounts' },
     { countryCode: 'fr', name: 'France - Plan Comptable General' },
-    /*  
-    { countryCode: 'th', name: 'Thailand - Chart of Accounts' },
-    { countryCode: 'us', name: 'United States - Chart of Accounts' },
-    { countryCode: 've', name: 'Venezuela - Plan de Cuentas' },
-    { countryCode: 'za', name: 'South Africa - Chart of Accounts' },
-    { countryCode: 'de', name: 'Germany - Kontenplan' },
-    { countryCode: 'it', name: 'Italy - Piano dei Conti' },
-    { countryCode: 'es', name: 'Spain - Plan de Cuentas' },
-    { countryCode: 'pt', name: 'Portugal - Plan de Contas' },
-    { countryCode: 'pl', name: 'Poland - Rejestr Kont' },
-    { countryCode: 'ro', name: 'Romania - Contabilitate' },
-    { countryCode: 'ru', name: 'Russia - Chart of Accounts' },
-    { countryCode: 'se', name: 'Sweden - Kontoplan' },
-    { countryCode: 'ch', name: 'Switzerland - Kontenplan' },
-    { countryCode: 'tr', name: 'Turkey - Chart of Accounts' },*/
   ];
 }
 

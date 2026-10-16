@@ -1,0 +1,136 @@
+﻿
+  src\setup\setupInstance.ts:24:import { getRandomString } from 'utils';
+  src\setup\setupInstance.ts:25:import { getDefaultLocations, getDefaultUOMs } from 'utils/defaults';
+  src\setup\setupInstance.ts:26:import { getCountryCodeFromCountry, getCountryInfo } from 'utils/misc';
+  src\setup\setupInstance.ts:27:import { CountryInfo } from 'utils/types';
+  src\setup\setupInstance.ts:28:import { CreateCOA } from './createCOA';
+  src\setup\setupInstance.ts:29:import { SetupWizardOptions } from './types';
+  src\setup\setupInstance.ts:30:
+  src\setup\setupInstance.ts:31:export default async function setupInstance(
+  src\setup\setupInstance.ts:32:  dbPath: string,
+  src\setup\setupInstance.ts:33:  setupWizardOptions: SetupWizardOptions,
+  src\setup\setupInstance.ts:34:  fyo: Fyo
+  src\setup\setupInstance.ts:35:) {
+> src\setup\setupInstance.ts:36:  const { companyName, country, bankName, chartOfAccounts } =
+  src\setup\setupInstance.ts:37:    setupWizardOptions;
+  src\setup\setupInstance.ts:38:
+  src\setup\setupInstance.ts:39:  fyo.store.skipTelemetryLogging = true;
+  src\setup\setupInstance.ts:40:  await initializeDatabase(dbPath, country, fyo);
+  src\setup\setupInstance.ts:41:  await updateSystemSettings(setupWizardOptions, fyo);
+  src\setup\setupInstance.ts:42:  await updateAccountingSettings(setupWizardOptions, fyo);
+  src\setup\setupInstance.ts:43:  await updatePrintSettings(setupWizardOptions, fyo);
+  src\setup\setupInstance.ts:44:
+  src\setup\setupInstance.ts:45:  await createCurrencyRecords(fyo);
+> src\setup\setupInstance.ts:46:  await createAccountRecords(bankName, country, chartOfAccounts, fyo);
+  src\setup\setupInstance.ts:47:  await createRegionalRecords(country, fyo);
+  src\setup\setupInstance.ts:48:  await createDefaultEntries(fyo);
+  src\setup\setupInstance.ts:49:  await createDefaultNumberSeries(fyo);
+  src\setup\setupInstance.ts:50:  await updateInventorySettings(fyo);
+  src\setup\setupInstance.ts:51:
+  src\setup\setupInstance.ts:52:  if (fyo.isElectron) {
+  src\setup\setupInstance.ts:53:    const { updatePrintTemplates } = await import('src/utils/printTemplates');
+  src\setup\setupInstance.ts:54:    await updatePrintTemplates(fyo);
+  src\setup\setupInstance.ts:55:  }
+  src\setup\setupInstance.ts:56:
+  src\setup\setupInstance.ts:57:  await completeSetup(companyName, fyo);
+  src\setup\setupInstance.ts:58:  if (!Object.keys(fyo.currencySymbols).length) {
+  src\setup\setupInstance.ts:77:
+  src\setup\setupInstance.ts:78:async function initializeDatabase(dbPath: string, country: string, fyo: Fyo) {
+  src\setup\setupInstance.ts:79:  const countryCode = getCountryCodeFromCountry(country);
+  src\setup\setupInstance.ts:80:  await initializeInstance(dbPath, true, countryCode, fyo);
+  src\setup\setupInstance.ts:81:}
+  src\setup\setupInstance.ts:82:
+  src\setup\setupInstance.ts:83:async function updateAccountingSettings(
+  src\setup\setupInstance.ts:84:  {
+  src\setup\setupInstance.ts:85:    companyName,
+  src\setup\setupInstance.ts:86:    country,
+  src\setup\setupInstance.ts:87:    fullname,
+  src\setup\setupInstance.ts:88:    email,
+> src\setup\setupInstance.ts:89:    bankName,
+  src\setup\setupInstance.ts:90:    fiscalYearStart,
+  src\setup\setupInstance.ts:91:    fiscalYearEnd,
+  src\setup\setupInstance.ts:92:  }: SetupWizardOptions,
+  src\setup\setupInstance.ts:93:  fyo: Fyo
+  src\setup\setupInstance.ts:94:) {
+  src\setup\setupInstance.ts:95:  const accountingSettings = (await fyo.doc.getDoc(
+  src\setup\setupInstance.ts:96:    'AccountingSettings'
+  src\setup\setupInstance.ts:97:  )) as AccountingSettings;
+  src\setup\setupInstance.ts:98:  await accountingSettings.setAndSync({
+  src\setup\setupInstance.ts:99:    companyName,
+  src\setup\setupInstance.ts:100:    country,
+  src\setup\setupInstance.ts:101:    fullname,
+  src\setup\setupInstance.ts:102:    email,
+> src\setup\setupInstance.ts:103:    bankName,
+  src\setup\setupInstance.ts:104:    fiscalYearStart,
+  src\setup\setupInstance.ts:105:    fiscalYearEnd,
+  src\setup\setupInstance.ts:106:  });
+  src\setup\setupInstance.ts:107:  return accountingSettings;
+  src\setup\setupInstance.ts:108:}
+  src\setup\setupInstance.ts:109:
+  src\setup\setupInstance.ts:110:async function updatePrintSettings(
+  src\setup\setupInstance.ts:111:  { logo, companyName, email }: SetupWizardOptions,
+  src\setup\setupInstance.ts:112:  fyo: Fyo
+  src\setup\setupInstance.ts:113:) {
+  src\setup\setupInstance.ts:114:  const printSettings = await fyo.doc.getDoc('PrintSettings');
+  src\setup\setupInstance.ts:115:  await printSettings.setAndSync({
+  src\setup\setupInstance.ts:166:      smallestValue: smallest_currency_fraction_value ?? 0.01,
+  src\setup\setupInstance.ts:167:      symbol: currency_symbol ?? '',
+  src\setup\setupInstance.ts:168:    };
+  src\setup\setupInstance.ts:169:
+  src\setup\setupInstance.ts:170:    const doc = checkAndCreateDoc('Currency', docObject, fyo);
+  src\setup\setupInstance.ts:171:    promises.push(doc);
+  src\setup\setupInstance.ts:172:    queue.push(currency);
+  src\setup\setupInstance.ts:173:  }
+  src\setup\setupInstance.ts:174:  return Promise.all(promises);
+  src\setup\setupInstance.ts:175:}
+  src\setup\setupInstance.ts:176:
+  src\setup\setupInstance.ts:177:async function createAccountRecords(
+> src\setup\setupInstance.ts:178:  bankName: string,
+  src\setup\setupInstance.ts:179:  country: string,
+  src\setup\setupInstance.ts:180:  chartOfAccounts: string,
+  src\setup\setupInstance.ts:181:  fyo: Fyo
+  src\setup\setupInstance.ts:182:) {
+  src\setup\setupInstance.ts:183:  const createCOA = new CreateCOA(chartOfAccounts, fyo);
+  src\setup\setupInstance.ts:184:  await createCOA.run();
+  src\setup\setupInstance.ts:185:  const parentAccount = await getBankAccountParentName(country, fyo);
+  src\setup\setupInstance.ts:186:  const bankAccountDoc = {
+> src\setup\setupInstance.ts:187:    name: bankName,
+  src\setup\setupInstance.ts:188:    rootType: AccountRootTypeEnum.Asset,
+  src\setup\setupInstance.ts:189:    parentAccount,
+  src\setup\setupInstance.ts:190:    accountType: 'Bank',
+  src\setup\setupInstance.ts:191:    isGroup: false,
+  src\setup\setupInstance.ts:192:  };
+  src\setup\setupInstance.ts:193:
+  src\setup\setupInstance.ts:194:  await checkAndCreateDoc('Account', bankAccountDoc, fyo);
+  src\setup\setupInstance.ts:195:  await createDiscountAccount(fyo);
+  src\setup\setupInstance.ts:196:  await setDefaultAccounts(fyo);
+  src\setup\setupInstance.ts:197:}
+  src\setup\setupInstance.ts:198:
+  src\setup\setupInstance.ts:199:export async function createDiscountAccount(fyo: Fyo) {
+  src\setup\setupInstance.ts:295:
+  src\setup\setupInstance.ts:296:  return false;
+  src\setup\setupInstance.ts:297:}
+  src\setup\setupInstance.ts:298:
+  src\setup\setupInstance.ts:299:async function getBankAccountParentName(country: string, fyo: Fyo) {
+  src\setup\setupInstance.ts:300:  const parentBankAccount = await fyo.db.getAllRaw('Account', {
+  src\setup\setupInstance.ts:301:    fields: ['*'],
+  src\setup\setupInstance.ts:302:    filters: { isGroup: true, accountType: 'Bank' },
+  src\setup\setupInstance.ts:303:  });
+  src\setup\setupInstance.ts:304:
+  src\setup\setupInstance.ts:305:  if (parentBankAccount.length === 0) {
+  src\setup\setupInstance.ts:306:    // This should not happen if the fixtures are correct.
+> src\setup\setupInstance.ts:307:    return 'Bank Accounts';
+  src\setup\setupInstance.ts:308:  } else if (parentBankAccount.length > 1) {
+  src\setup\setupInstance.ts:309:    switch (country) {
+  src\setup\setupInstance.ts:310:      case 'Indonesia':
+  src\setup\setupInstance.ts:311:        return 'Bank Rupiah - 1121.000';
+  src\setup\setupInstance.ts:312:      default:
+  src\setup\setupInstance.ts:313:        break;
+  src\setup\setupInstance.ts:314:    }
+  src\setup\setupInstance.ts:315:  }
+  src\setup\setupInstance.ts:316:
+  src\setup\setupInstance.ts:317:  return parentBankAccount[0].name;
+  src\setup\setupInstance.ts:318:}
+  src\setup\setupInstance.ts:319:
+
+

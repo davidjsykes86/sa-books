@@ -104,7 +104,8 @@ async function getCOA(chartOfAccounts: string): Promise<COATree> {
 
 function getAccountName(accountName: string, accountNumber?: string) {
   if (accountNumber) {
-    return `${accountName} - ${accountNumber}`;
+    // Pastel style: "1000/000 - Sales"
+    return `${accountNumber} - ${accountName}`;
   }
 
   return accountName;

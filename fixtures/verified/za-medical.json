@@ -1,0 +1,414 @@
+{
+  "countryCode": "za-medical",
+  "name": "South Africa - Medical & Dental (Pastel)",
+  "tree": {
+    "Assets": {
+      "rootType": "Asset",
+      "B35 Fixed Assets": {
+        "6100 - Land & Buildings": {
+          "Land & Buildings - @ Cost": {
+            "accountNumber": "6100/010",
+            "accountType": "Fixed Asset"
+          },
+          "Land & Buildings - Accum Depre": {
+            "accountNumber": "6100/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        },
+        "6200 - Motor Vehicles": {
+          "Motor Vehicles - @ Cost": {
+            "accountNumber": "6200/010",
+            "accountType": "Fixed Asset"
+          },
+          "Motor Vehicles - Accum Depre": {
+            "accountNumber": "6200/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        },
+        "6250 - Computer Equipment": {
+          "Computer Equipment - @ Cost": {
+            "accountNumber": "6250/010",
+            "accountType": "Fixed Asset"
+          },
+          "Computer Equipment - Accum Depre": {
+            "accountNumber": "6250/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        },
+        "6300 - Office Equipment": {
+          "Office Equipment - @ Cost": {
+            "accountNumber": "6300/010",
+            "accountType": "Fixed Asset"
+          },
+          "Office Equipment - Accum Depre": {
+            "accountNumber": "6300/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        },
+        "6350 - Furniture & Fittings": {
+          "Furniture & Fittings - @ Cost": {
+            "accountNumber": "6350/010",
+            "accountType": "Fixed Asset"
+          },
+          "Furniture & Fittings - Accum Depre": {
+            "accountNumber": "6350/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        },
+        "6400 - Medical Equipment": {
+          "Medical Equipment - @ Cost": {
+            "accountNumber": "6400/010",
+            "accountType": "Fixed Asset"
+          },
+          "Medical Equipment - Accum Depre": {
+            "accountNumber": "6400/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        },
+        "6600 - Other Fixed Assets": {
+          "Other Fixed Assets - @ Cost": {
+            "accountNumber": "6600/010",
+            "accountType": "Fixed Asset"
+          },
+          "Other Fixed Assets - Accum Depre": {
+            "accountNumber": "6600/020",
+            "accountType": "Accumulated Depreciation"
+          }
+        }
+      },
+      "B40 Investments": {
+        "Investments": {
+          "accountNumber": "7100/000"
+        }
+      },
+      "B45 Other Fixed Assets": {
+        "Goodwill / Intangible Assets": {
+          "accountNumber": "7000/000"
+        }
+      },
+      "B50 Inventory": {
+        "Inventory Control Account": {
+          "accountNumber": "7700/000",
+          "accountType": "Stock"
+        }
+      },
+      "B55 Accounts Receivable": {
+        "Customer Control Account": {
+          "accountNumber": "8000/000",
+          "accountType": "Receivable"
+        },
+        "Less: Provision For Doubtful Debts": {
+          "accountNumber": "8050/000"
+        }
+      },
+      "B60 Bank": {
+        "Bank Account": {
+          "accountNumber": "8400/000",
+          "accountType": "Bank"
+        },
+        "Petty Cash": {
+          "accountNumber": "8410/000",
+          "accountType": "Cash"
+        },
+        "accountType": "Bank"
+      },
+      "B65 Other Current Assets": {
+        "POS Cash Control": {
+          "accountNumber": "8100/000"
+        },
+        "8200 - Sundry Customers": {
+          "Sundry Customers": {
+            "accountNumber": "8200/000"
+          },
+          "Prepayments / Deferred Expenses": {
+            "accountNumber": "8200/010"
+          },
+          "Staff Loans": {
+            "accountNumber": "8200/020"
+          }
+        }
+      }
+    },
+    "Liabilities": {
+      "rootType": "Liability",
+      "B25 Long Term Borrowings": {
+        "Long Term Liabilities": {
+          "accountNumber": "5500/000"
+        }
+      },
+      "B30 Other Long Term Liabilities": {
+        "Instalment Sale Creditors": {
+          "accountNumber": "5600/000"
+        }
+      },
+      "B70 Accounts Payable": {
+        "Supplier Control Account": {
+          "accountNumber": "9000/000",
+          "accountType": "Payable"
+        },
+        "GRN Accrual Account": {
+          "accountNumber": "9100/000",
+          "accountType": "Stock Received But Not Billed"
+        }
+      },
+      "B75 Taxation": {
+        "Taxation Payable": {
+          "accountNumber": "9300/000"
+        }
+      },
+      "B80 Other Current Liabilities": {
+        "9200 - Sundry Suppliers": {
+          "Sundry Suppliers": {
+            "accountNumber": "9200/000"
+          },
+          "Accounting / Audit Fee Accrual": {
+            "accountNumber": "9200/010"
+          },
+          "Other Accruals": {
+            "accountNumber": "9200/020"
+          }
+        },
+        "Salary & Wages Control": {
+          "accountNumber": "9250/000"
+        },
+        "9400 - Provision for Future Expenses": {
+          "Provision for Future Expenses": {
+            "accountNumber": "9400/000"
+          },
+          "Provision for Insurance": {
+            "accountNumber": "9400/010"
+          },
+          "Provision for Salary Bonus": {
+            "accountNumber": "9400/020"
+          }
+        },
+        "Vat / Tax Control Account": {
+          "accountNumber": "9500/000",
+          "accountType": "Tax"
+        },
+        "Vat / Tax Provision Account": {
+          "accountNumber": "9510/000"
+        },
+        "Opening Balance / Suspense Account": {
+          "accountNumber": "9990/000",
+          "accountType": "Temporary"
+        }
+      }
+    },
+    "Equity": {
+      "rootType": "Equity",
+      "B15 Retained Income": {
+        "Accumulated Funds / (Deficit)": {
+          "accountNumber": "5200/000",
+          "accountType": "Equity"
+        }
+      },
+      "B20 Shareholders Loan": {
+        "Capital Account": {
+          "accountNumber": "5400/000",
+          "accountType": "Equity"
+        },
+        "Drawings Account": {
+          "accountNumber": "5450/000"
+        }
+      }
+    },
+    "Income": {
+      "rootType": "Income",
+      "I10 Sales": {
+        "Fee Income": {
+          "accountNumber": "1000/000",
+          "accountType": "Income Account"
+        },
+        "Dispensary Sales": {
+          "accountNumber": "1200/000"
+        }
+      },
+      "I20 Other Income": {
+        "Discount Received for Cash": {
+          "accountNumber": "2700/000"
+        },
+        "Interest Received": {
+          "accountNumber": "2750/000"
+        },
+        "Pft/Loss on Sale of Non Current Assets": {
+          "accountNumber": "2800/000"
+        },
+        "Bad Debts Recovered": {
+          "accountNumber": "2850/000"
+        },
+        "Sundry Income": {
+          "accountNumber": "2900/000"
+        }
+      }
+    },
+    "Expenses": {
+      "rootType": "Expense",
+      "I15 Cost of Sales": {
+        "Dispensary Cost of Sales / Purchases": {
+          "accountNumber": "2000/000",
+          "accountType": "Cost of Goods Sold"
+        },
+        "Dispensary Inventory Adjustment": {
+          "accountNumber": "2100/000",
+          "accountType": "Stock Adjustment"
+        },
+        "Dispensary Inventory Count Variance": {
+          "accountNumber": "2150/000"
+        },
+        "Purchase Variance": {
+          "accountNumber": "2200/000"
+        },
+        "2400 - Recovery Account": {
+          "Recovery Account": {
+            "accountNumber": "2400/000"
+          },
+          "Labour Cost Manufac Variance": {
+            "accountNumber": "2400/010"
+          },
+          "Direct Cost Manufac Variance": {
+            "accountNumber": "2400/020"
+          },
+          "Other Cost Manufac Variance": {
+            "accountNumber": "2400/030"
+          }
+        }
+      },
+      "I25 Expenses": {
+        "Accounting Fees": {
+          "accountNumber": "3000/000"
+        },
+        "Advertizing and promotions": {
+          "accountNumber": "3010/000"
+        },
+        "Assistant Fees": {
+          "accountNumber": "3050/000"
+        },
+        "Bad Debts": {
+          "accountNumber": "3150/000"
+        },
+        "Bank Charges": {
+          "accountNumber": "3200/000"
+        },
+        "Cleaning": {
+          "accountNumber": "3250/000"
+        },
+        "Computer Expenses": {
+          "accountNumber": "3300/000"
+        },
+        "Consumables and loose tools": {
+          "accountNumber": "3320/000"
+        },
+        "Consulting Fees": {
+          "accountNumber": "3350/000"
+        },
+        "Courier & Postage": {
+          "accountNumber": "3400/000"
+        },
+        "Depreciation": {
+          "accountNumber": "3450/000",
+          "accountType": "Depreciation"
+        },
+        "Discount Allowed for Cash": {
+          "accountNumber": "3550/000"
+        },
+        "Donations": {
+          "accountNumber": "3600/000"
+        },
+        "Electricity & Water": {
+          "accountNumber": "3650/000"
+        },
+        "Entertainment Expenses": {
+          "accountNumber": "3700/000"
+        },
+        "Finance Charges": {
+          "accountNumber": "3750/000"
+        },
+        "General Expenses": {
+          "accountNumber": "3800/000"
+        },
+        "Rounding": {
+          "accountNumber": "3810/000",
+          "accountType": "Round Off"
+        },
+        "Insurance": {
+          "accountNumber": "3850/000"
+        },
+        "Interest Paid": {
+          "accountNumber": "3900/000"
+        },
+        "Laundry & Dry Cleaning": {
+          "accountNumber": "3920/000"
+        },
+        "Leasing Charges": {
+          "accountNumber": "3950/000"
+        },
+        "Legal Fees": {
+          "accountNumber": "4000/000"
+        },
+        "Levies": {
+          "accountNumber": "4050/000"
+        },
+        "Locum Fees": {
+          "accountNumber": "4080/000"
+        },
+        "Magazines & Periodicals": {
+          "accountNumber": "4100/000"
+        },
+        "Medical & Surgical Supplies": {
+          "accountNumber": "4120/000"
+        },
+        "Membership fees": {
+          "accountNumber": "4130/000"
+        },
+        "4150 - Motor Vehicle Expenses": {
+          "Motor Vehicle Expenses": {
+            "accountNumber": "4150/000"
+          },
+          "Motor Vehicle Expenses - Fuel": {
+            "accountNumber": "4150/010"
+          },
+          "Motor Vehicle Expenses - Repairs & Maint": {
+            "accountNumber": "4150/020"
+          }
+        },
+        "Printing & Stationery": {
+          "accountNumber": "4200/000"
+        },
+        "Pft/Loss on foreign exchange": {
+          "accountNumber": "4210/000"
+        },
+        "Rent Paid": {
+          "accountNumber": "4300/000"
+        },
+        "Repairs & Maintenance": {
+          "accountNumber": "4350/000"
+        },
+        "Salaries & Wages": {
+          "accountNumber": "4400/000"
+        },
+        "Security": {
+          "accountNumber": "4420/000"
+        },
+        "Staff Training": {
+          "accountNumber": "4450/000"
+        },
+        "Staff Welfare": {
+          "accountNumber": "4500/000"
+        },
+        "Subscriptions": {
+          "accountNumber": "4550/000"
+        },
+        "Telephone & Fax": {
+          "accountNumber": "4600/000"
+        },
+        "Travel & Accommodation": {
+          "accountNumber": "4650/000"
+        },
+        "Wages - casual": {
+          "accountNumber": "4900/000"
+        }
+      }
+    }
+  }
+}

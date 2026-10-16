@@ -1,0 +1,8 @@
+﻿
+src\setup\setupInstance.ts:361:    [AccountTypeEnum['Cost of Goods Sold']]: 'costOfGoodsSold',
+src\setup\standardCOA.ts:79:            accountType: 'Cost of Goods Sold',
+src\setup\standardCOA.ts:111:          accountType: 'Round Off',
+models\inventory\InventorySettings.ts:28:      accountType: AccountTypeEnum['Cost of Goods Sold'],
+models\inventory\StockTransferItem.ts:348:      let itemNotFor = 'Sales';
+
+

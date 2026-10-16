@@ -1,8 +1,8 @@
 import { Fyo } from 'fyo';
 import { ModelNameEnum } from 'models/types';
 
-export const SA_VAT_ACCOUNT = 'VAT Control';
-const SA_VAT_PARENT = 'Duties and Taxes';
+const FALLBACK_VAT_ACCOUNT = 'VAT Control';
+const FALLBACK_VAT_PARENT = 'Duties and Taxes';
 
 const SA_VAT_TEMPLATES: { name: string; vatType: string; rate: number }[] = [
   { name: 'VAT 15% Standard', vatType: 'STD', rate: 15 },
@@ -12,22 +12,45 @@ const SA_VAT_TEMPLATES: { name: string; vatType: string; rate: number }[] = [
   { name: 'VAT 15% Capital Goods', vatType: 'CAPITAL', rate: 15 },
 ];
 
-export async function setupSAVat(fyo: Fyo): Promise<void> {
-  const accountExists = await fyo.db.exists(
-    ModelNameEnum.Account,
-    SA_VAT_ACCOUNT
-  );
+async function getVatAccount(fyo: Fyo): Promise<string> {
+  const taxAccounts = (await fyo.db.getAll(ModelNameEnum.Account, {
+    fields: ['name', 'isGroup'],
+    filters: { accountType: 'Tax' },
+  })) as { name: string; isGroup?: boolean | number }[];
 
-  if (!accountExists) {
-    const account = fyo.doc.getNewDoc(ModelNameEnum.Account, {
-      name: SA_VAT_ACCOUNT,
-      rootType: 'Liability',
-      parentAccount: SA_VAT_PARENT,
-      accountType: 'Tax',
-      isGroup: false,
-    });
-    await account.sync();
+  const leaves = taxAccounts.filter((a) => !a.isGroup);
+  const preferred =
+    leaves.find((a) => a.name.startsWith('9500/000')) ??
+    leaves.find((a) => a.name === FALLBACK_VAT_ACCOUNT) ??
+    leaves[0];
+
+  if (preferred) {
+    return preferred.name;
   }
+
+  const parentExists = await fyo.db.exists(
+    ModelNameEnum.Account,
+    FALLBACK_VAT_PARENT
+  );
+  if (!parentExists) {
+    throw new Error(
+      'No VAT account found. Create a Tax-type account (e.g. 9500/000 Vat Control) first.'
+    );
+  }
+
+  const account = fyo.doc.getNewDoc(ModelNameEnum.Account, {
+    name: FALLBACK_VAT_ACCOUNT,
+    rootType: 'Liability',
+    parentAccount: FALLBACK_VAT_PARENT,
+    accountType: 'Tax',
+    isGroup: false,
+  });
+  await account.sync();
+  return FALLBACK_VAT_ACCOUNT;
+}
+
+export async function setupSAVat(fyo: Fyo): Promise<void> {
+  const vatAccount = await getVatAccount(fyo);
 
   for (const t of SA_VAT_TEMPLATES) {
     const exists = await fyo.db.exists(ModelNameEnum.Tax, t.name);
@@ -38,7 +61,7 @@ export async function setupSAVat(fyo: Fyo): Promise<void> {
     const tax = fyo.doc.getNewDoc(ModelNameEnum.Tax, {
       name: t.name,
       vatType: t.vatType,
-      details: [{ account: SA_VAT_ACCOUNT, rate: t.rate }],
+      details: [{ account: vatAccount, rate: t.rate }],
     });
     await tax.sync();
   }

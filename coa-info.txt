@@ -1,0 +1,193 @@
+﻿===== Account.json
+{
+  "name": "Account",
+  "label": "Account",
+  "naming": "manual",
+  "create": false,
+  "isSingle": false,
+  "isTree": true,
+  "fields": [
+    {
+      "fieldname": "name",
+      "label": "Account Name",
+      "fieldtype": "Data",
+      "required": true
+    },
+    {
+      "fieldname": "rootType",
+      "label": "Root Type",
+      "fieldtype": "Select",
+      "placeholder": "Root Type",
+      "options": [
+        {
+          "value": "Asset",
+          "label": "Asset"
+        },
+        {
+          "value": "Liability",
+          "label": "Liability"
+        },
+        {
+          "value": "Equity",
+          "label": "Equity"
+        },
+        {
+          "value": "Income",
+          "label": "Income"
+        },
+        {
+          "value": "Expense",
+          "label": "Expense"
+        }
+      ],
+      "required": true
+    },
+    {
+      "fieldname": "parentAccount",
+      "label": "Parent Account",
+      "fieldtype": "Link",
+      "target": "Account"
+    },
+    {
+      "fieldname": "accountType",
+      "label": "Account Type",
+      "placeholder": "Account Type",
+      "fieldtype": "Select",
+      "options": [
+        {
+          "value": "Accumulated Depreciation",
+          "label": "Accumulated Depreciation"
+        },
+        {
+          "value": "Bank",
+          "label": "Bank"
+        },
+        {
+          "value": "Cash",
+          "label": "Cash"
+        },
+        {
+          "value": "Chargeable",
+          "label": "Chargeable"
+        },
+        {
+          "value": "Cost of Goods Sold",
+          "label": "Cost of Goods Sold"
+        },
+        {
+          "value": "Depreciation",
+          "label": "Depreciation"
+        },
+        {
+          "value": "Equity",
+          "label": "Equity"
+        },
+        {
+          "value": "Expense Account",
+          "label": "Expense Account"
+        },
+        {
+          "value": "Expenses Included In Valuation",
+          "label": "Expenses Included In Valuation"
+        },
+        {
+          "value": "Fixed Asset",
+          "label": "Fixed Asset"
+        },
+        {
+          "value": "Income Account",
+          "label": "Income Account"
+        },
+        {
+          "value": "Payable",
+          "label": "Payable"
+        },
+        {
+          "value": "Receivable",
+          "label": "Receivable"
+        },
+        {
+          "value": "Round Off",
+          "label": "Round Off"
+        },
+        {
+          "value": "Stock",
+          "label": "Stock"
+        },
+        {
+          "value": "Stock Adjustment",
+          "label": "Stock Adjustment"
+        },
+        {
+          "value": "Stock Received But Not Billed",
+          "label": "Stock Received But Not Billed"
+        },
+        {
+          "value": "Tax",
+          "label": "Tax"
+        },
+        {
+          "value": "Temporary",
+          "label": "Temporary"
+        }
+      ]
+    },
+    {
+      "fieldname": "isGroup",
+      "label": "Is Group",
+      "fieldtype": "Check",
+      "default": false
+    }
+  ],
+  "quickEditFields": ["rootType", "parentAccount", "accountType", "isGroup"]
+}
+===== fixtures
+verified
+countryInfo.json
+verified\ae.json
+verified\ca.json
+verified\ch.json
+verified\fr.json
+verified\gt.json
+verified\hu.json
+verified\id.json
+verified\in.json
+verified\mx.json
+verified\ni.json
+verified\nl.json
+verified\sg.json
+verified\standardCOA.json
+===== setup search
+
+src\setup\createCOA.ts:4:  COAChildAccount,
+src\setup\createCOA.ts:5:  COARootAccount,
+src\setup\createCOA.ts:6:  COATree,
+src\setup\createCOA.ts:8:import { getCOAList } from 'models/baseModels/SetupWizard/SetupWizard';
+src\setup\createCOA.ts:9:import { getStandardCOA } from './standardCOA';
+src\setup\createCOA.ts:11:const accountFields = ['accountType', 'accountNumber', 'rootType', 'isGroup'];
+src\setup\createCOA.ts:13:export class CreateCOA {
+src\setup\createCOA.ts:15:  chartOfAccounts: string;
+src\setup\createCOA.ts:17:  constructor(chartOfAccounts: string, fyo: Fyo) {
+src\setup\createCOA.ts:18:    this.chartOfAccounts = chartOfAccounts;
+src\setup\createCOA.ts:23:    const chart = await getCOA(this.chartOfAccounts);
+src\setup\createCOA.ts:24:    await this.createCOAAccounts(chart, null, '', true);
+src\setup\createCOA.ts:27:  async createCOAAccounts(
+src\setup\createCOA.ts:28:    children: COATree | COARootAccount | COAChildAccount,
+src\setup\createCOA.ts:41:        rootType = (child as COARootAccount).rootType;
+src\setup\createCOA.ts:44:      const accountType = (child as COAChildAccount).accountType ?? '';
+src\setup\createCOA.ts:45:      const accountNumber = (child as COAChildAccount).accountNumber;
+src\setup\createCOA.ts:46:      const accountName = getAccountName(rootName, accountNumber);
+src\setup\createCOA.ts:49:        child as COAChildAccount | COARootAccount
+src\setup\createCOA.ts:61:      await this.createCOAAccounts(
+src\setup\createCOA.ts:62:        child as COAChildAccount,
+src\setup\createCOA.ts:71:function identifyIsGroup(child: COARootAccount | COAChildAccount): boolean {
+src\setup\createCOA.ts:86:async function getCOA(chartOfAccounts: string): Promise<COATree> {
+src\setup\createCOA.ts:87:  const coaList = getCOAList();
+src\setup\createCOA.ts:88:  const coa = coaList.find(({ name }) => name === chartOfAccounts);
+src\setup\createCOA.ts:90:  const conCode = coa?.countryCode;
+src\setup\createCOA.ts:92:    return getStandardCOA();
+src\setup\createCOA.ts:97:    const countryCoa = (await import(`../../fixtures/verified/${conCode}.json`))
+src\setup\createCOA.ts:98:      .default as { tree: COATree };
+src\setup\createCOA.ts:99:    return countryCoa.tree;
+
+
