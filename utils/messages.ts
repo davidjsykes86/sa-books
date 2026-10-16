@@ -36,6 +36,10 @@ export enum IPC_ACTIONS {
   DELETE_FILE = 'delete-file',
   GET_DB_DEFAULT_PATH = 'get-db-default-path',
   SEND_API_REQUEST = 'send-api-request',
+  // SA local backup
+  BACKUP_GET_FOLDER = 'backup-get-folder',
+  BACKUP_CHOOSE_FOLDER = 'backup-choose-folder',
+  BACKUP_NOW = 'backup-now',
   // Database messages
   DB_CREATE = 'db-create',
   DB_CONNECT = 'db-connect',

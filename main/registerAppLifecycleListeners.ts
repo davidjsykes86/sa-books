@@ -3,8 +3,30 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
 import { Main } from '../main';
 import { rendererLog } from './helpers';
 import { emitMainProcessError } from 'backend/helpers';
+import { backupNow, registerSABackupListeners } from './saBackup';
 
 export default function registerAppLifecycleListeners(main: Main) {
+  registerSABackupListeners(main);
+
+  let quitBackupDone = false;
+  app.on('before-quit', (event) => {
+    if (quitBackupDone) {
+      return;
+    }
+
+    event.preventDefault();
+    quitBackupDone = true;
+
+    backupNow()
+      .then((result) => {
+        if (!result.success) {
+          console.log('Backup on close skipped:', result.message);
+        }
+      })
+      .catch((err) => console.log('Backup on close failed:', err))
+      .finally(() => app.quit());
+  });
+
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit();

@@ -279,3 +279,29 @@ const ipc = {
 
 contextBridge.exposeInMainWorld('ipc', ipc);
 export type IPC = typeof ipc;
+
+
+const saBackup = {
+  async getFolder() {
+    return (await ipcRenderer.invoke(IPC_ACTIONS.BACKUP_GET_FOLDER)) as
+      | string
+      | null;
+  },
+
+  async chooseFolder() {
+    return (await ipcRenderer.invoke(IPC_ACTIONS.BACKUP_CHOOSE_FOLDER)) as
+      | string
+      | null;
+  },
+
+  async backupNow() {
+    return (await ipcRenderer.invoke(IPC_ACTIONS.BACKUP_NOW)) as {
+      success: boolean;
+      filePath?: string;
+      message?: string;
+    };
+  },
+};
+
+contextBridge.exposeInMainWorld('saBackup', saBackup);
+export type SABackup = typeof saBackup;

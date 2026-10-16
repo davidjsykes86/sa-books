@@ -1,0 +1,1084 @@
+﻿===== main\preload.ts
+import type {
+  OpenDialogOptions,
+  OpenDialogReturnValue,
+  SaveDialogOptions,
+  SaveDialogReturnValue,
+} from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
+import type { ConfigMap } from 'fyo/core/types';
+import config from 'utils/config';
+import type { DatabaseMethod } from 'utils/db/types';
+import type { BackendResponse } from 'utils/ipc/types';
+import { IPC_ACTIONS, IPC_CHANNELS, IPC_MESSAGES } from 'utils/messages';
+import type {
+  ConfigFilesWithModified,
+  Creds,
+  LanguageMap,
+  SelectFileOptions,
+  SelectFileReturn,
+  TemplateFile,
+} from 'utils/types';
+
+type IPCRendererListener = Parameters<typeof ipcRenderer.on>[1];
+const ipc = {
+  desktop: true,
+
+  reloadWindow() {
+    return ipcRenderer.send(IPC_MESSAGES.RELOAD_MAIN_WINDOW);
+  },
+
+  minimizeWindow() {
+    return ipcRenderer.send(IPC_MESSAGES.MINIMIZE_MAIN_WINDOW);
+  },
+
+  toggleMaximize() {
+    return ipcRenderer.send(IPC_MESSAGES.MAXIMIZE_MAIN_WINDOW);
+  },
+
+  isMaximized() {
+    return new Promise((resolve) => {
+      ipcRenderer.send(IPC_MESSAGES.ISMAXIMIZED_MAIN_WINDOW);
+      ipcRenderer.once(
+        IPC_MESSAGES.ISMAXIMIZED_RESULT,
+        (_event, isMaximized) => {
+          resolve(isMaximized);
+        }
+      );
+    });
+  },
+
+  isFullscreen() {
+    return new Promise((resolve) => {
+      ipcRenderer.send(IPC_MESSAGES.ISFULLSCREEN_MAIN_WINDOW);
+      ipcRenderer.once(
+        IPC_MESSAGES.ISFULLSCREEN_RESULT,
+        (_event, isFullscreen) => {
+          resolve(isFullscreen);
+        }
+      );
+    });
+  },
+
+  closeWindow() {
+    return ipcRenderer.send(IPC_MESSAGES.CLOSE_MAIN_WINDOW);
+  },
+
+  async getCreds() {
+    return (await ipcRenderer.invoke(IPC_ACTIONS.GET_CREDS)) as Creds;
+  },
+
+  async getLanguageMap(code: string) {
+    return (await ipcRenderer.invoke(IPC_ACTIONS.GET_LANGUAGE_MAP, code)) as {
+      languageMap: LanguageMap;
+      success: boolean;
+      message: string;
+    };
+  },
+
+  async getTemplates(posTemplateWidth?: number): Promise<TemplateFile[]> {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.GET_TEMPLATES,
+      posTemplateWidth
+    )) as TemplateFile[];
+  },
+
+  async initScheduler(time: string) {
+    await ipcRenderer.invoke(IPC_ACTIONS.INIT_SHEDULER, time);
+  },
+
+  async selectFile(options: SelectFileOptions): Promise<SelectFileReturn> {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.SELECT_FILE,
+      options
+    )) as SelectFileReturn;
+  },
+
+  async getSaveFilePath(options: SaveDialogOptions) {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.GET_SAVE_FILEPATH,
+      options
+    )) as SaveDialogReturnValue;
+  },
+
+  async getOpenFilePath(options: OpenDialogOptions) {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.GET_OPEN_FILEPATH,
+      options
+    )) as OpenDialogReturnValue;
+  },
+
+  async checkDbAccess(filePath: string) {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.CHECK_DB_ACCESS,
+      filePath
+    )) as boolean;
+  },
+
+  async checkForUpdates() {
+    await ipcRenderer.invoke(IPC_ACTIONS.CHECK_FOR_UPDATES);
+  },
+
+  openLink(link: string) {
+    ipcRenderer.send(IPC_MESSAGES.OPEN_EXTERNAL, link);
+  },
+
+  async deleteFile(filePath: string) {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.DELETE_FILE,
+      filePath
+    )) as BackendResponse;
+  },
+
+  async saveData(data: string, savePath: string) {
+    await ipcRenderer.invoke(IPC_ACTIONS.SAVE_DATA, data, savePath);
+  },
+
+  showItemInFolder(filePath: string) {
+    ipcRenderer.send(IPC_MESSAGES.SHOW_ITEM_IN_FOLDER, filePath);
+  },
+
+  async makePDF(
+    html: string,
+    savePath: string,
+    width: number,
+    height: number
+  ): Promise<boolean> {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.SAVE_HTML_AS_PDF,
+      html,
+      savePath,
+      width,
+      height
+    )) as boolean;
+  },
+
+  async printDocument(
+    html: string,
+    width: number,
+    height: number
+  ): Promise<boolean> {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.PRINT_HTML_DOCUMENT,
+      html,
+      width,
+      height
+    )) as boolean;
+  },
+
+  async getDbList() {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.GET_DB_LIST
+    )) as ConfigFilesWithModified[];
+  },
+
+  async getDbDefaultPath(companyName: string) {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.GET_DB_DEFAULT_PATH,
+      companyName
+    )) as string;
+  },
+
+  async getEnv() {
+    return (await ipcRenderer.invoke(IPC_ACTIONS.GET_ENV)) as {
+      isDevelopment: boolean;
+      platform: string;
+      version: string;
+    };
+  },
+
+  openExternalUrl(url: string) {
+    ipcRenderer.send(IPC_MESSAGES.OPEN_EXTERNAL, url);
+  },
+
+  async showError(title: string, content: string) {
+    await ipcRenderer.invoke(IPC_ACTIONS.SHOW_ERROR, { title, content });
+  },
+
+  async sendError(body: string) {
+    await ipcRenderer.invoke(IPC_ACTIONS.SEND_ERROR, body);
+  },
+
+  async sendAPIRequest(endpoint: string, options: RequestInit | undefined) {
+    return (await ipcRenderer.invoke(
+      IPC_ACTIONS.SEND_API_REQUEST,
+      endpoint,
+      options
+    )) as Promise<
+      {
+        [key: string]: string | number | boolean | Date | object | object[];
+      }[]
+    >;
+  },
+
+  registerMainProcessErrorListener(listener: IPCRendererListener) {
+    ipcRenderer.on(IPC_CHANNELS.LOG_MAIN_PROCESS_ERROR, listener);
+  },
+
+  registerTriggerFrontendActionListener(listener: IPCRendererListener) {
+    ipcRenderer.on(IPC_CHANNELS.TRIGGER_ERPNEXT_SYNC, listener);
+  },
+
+  registerConsoleLogListener(listener: IPCRendererListener) {
+    ipcRenderer.on(IPC_CHANNELS.CONSOLE_LOG, listener);
+  },
+
+  db: {
+    async getSchema() {
+      return (await ipcRenderer.invoke(
+        IPC_ACTIONS.DB_SCHEMA
+      )) as BackendResponse;
+    },
+
+    async create(dbPath: string, countryCode?: string) {
+      return (await ipcRenderer.invoke(
+        IPC_ACTIONS.DB_CREATE,
+        dbPath,
+        countryCode
+      )) as BackendResponse;
+    },
+
+    async connect(dbPath: string, countryCode?: string) {
+      return (await ipcRenderer.invoke(
+        IPC_ACTIONS.DB_CONNECT,
+        dbPath,
+        countryCode
+      )) as BackendResponse;
+    },
+
+    async call(method: DatabaseMethod, ...args: unknown[]) {
+      return (await ipcRenderer.invoke(
+        IPC_ACTIONS.DB_CALL,
+        method,
+        ...args
+      )) as BackendResponse;
+    },
+
+    async bespoke(method: string, ...args: unknown[]) {
+      return (await ipcRenderer.invoke(
+        IPC_ACTIONS.DB_BESPOKE,
+        method,
+        ...args
+      )) as BackendResponse;
+    },
+  },
+
+  store: {
+    get<K extends keyof ConfigMap>(key: K) {
+      return config.get(key);
+    },
+
+    set<K extends keyof ConfigMap>(key: K, value: ConfigMap[K]) {
+      return config.set(key, value);
+    },
+
+    delete(key: keyof ConfigMap) {
+      return config.delete(key);
+    },
+  },
+} as const;
+
+contextBridge.exposeInMainWorld('ipc', ipc);
+export type IPC = typeof ipc;
+===== main\registerIpcMainActionListeners.ts
+import {
+  MessageBoxOptions,
+  OpenDialogOptions,
+  SaveDialogOptions,
+  app,
+  dialog,
+  ipcMain,
+} from 'electron';
+import { autoUpdater } from 'electron-updater';
+import { constants } from 'fs';
+import fs from 'fs-extra';
+import path from 'path';
+import { SelectFileOptions, SelectFileReturn } from 'utils/types';
+import databaseManager from '../backend/database/manager';
+import { emitMainProcessError } from '../backend/helpers';
+import { Main } from '../main';
+import { DatabaseMethod } from '../utils/db/types';
+import { IPC_ACTIONS } from '../utils/messages';
+import { getUrlAndTokenString, sendError } from './contactMothership';
+import { getLanguageMap } from './getLanguageMap';
+import { getTemplates } from './getPrintTemplates';
+import { printHtmlDocument } from './printHtmlDocument';
+import {
+  getConfigFilesWithModified,
+  getErrorHandledReponse,
+  isNetworkError,
+  setAndGetCleanedConfigFiles,
+} from './helpers';
+import { saveHtmlAsPdf } from './saveHtmlAsPdf';
+import { sendAPIRequest } from './api';
+import { initScheduler } from './initSheduler';
+
+export default function registerIpcMainActionListeners(main: Main) {
+  ipcMain.handle(IPC_ACTIONS.CHECK_DB_ACCESS, async (_, filePath: string) => {
+    try {
+      await fs.access(filePath, constants.W_OK | constants.R_OK);
+    } catch (err) {
+      return false;
+    }
+
+    return true;
+  });
+
+  ipcMain.handle(
+    IPC_ACTIONS.GET_DB_DEFAULT_PATH,
+    async (_, companyName: string) => {
+      let root: string;
+      try {
+        root = app.getPath('documents');
+      } catch {
+        root = app.getPath('userData');
+      }
+
+      if (main.isDevelopment) {
+        root = 'dbs';
+      }
+
+      const dbsPath = path.join(root, 'Frappe Books');
+      const backupPath = path.join(dbsPath, 'backups');
+      await fs.ensureDir(backupPath);
+
+      let dbFilePath = path.join(dbsPath, `${companyName}.books.db`);
+
+      if (await fs.pathExists(dbFilePath)) {
+        const option = await dialog.showMessageBox({
+          type: 'question',
+          title: 'File Exists',
+          message: `Filename already exists. Do you want to overwrite the existing file or create a new one?`,
+          buttons: ['Overwrite', 'New'],
+        });
+
+        if (option.response === 1) {
+          const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '');
+
+          dbFilePath = path.join(
+            dbsPath,
+            `${companyName}_${timestamp}.books.db`
+          );
+
+          await dialog.showMessageBox({
+            type: 'info',
+            message: `New file: ${path.basename(dbFilePath)}`,
+          });
+        }
+      }
+
+      return dbFilePath;
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.GET_OPEN_FILEPATH,
+    async (_, options: OpenDialogOptions) => {
+      return await dialog.showOpenDialog(main.mainWindow!, options);
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.GET_SAVE_FILEPATH,
+    async (_, options: SaveDialogOptions) => {
+      return await dialog.showSaveDialog(main.mainWindow!, options);
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.GET_DIALOG_RESPONSE,
+    async (_, options: MessageBoxOptions) => {
+      if (main.isDevelopment || main.isLinux) {
+        Object.assign(options, { icon: main.icon });
+      }
+
+      return await dialog.showMessageBox(main.mainWindow!, options);
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.SHOW_ERROR,
+    (_, { title, content }: { title: string; content: string }) => {
+      return dialog.showErrorBox(title, content);
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.SAVE_HTML_AS_PDF,
+    async (
+      _,
+      html: string,
+      savePath: string,
+      width: number,
+      height: number
+    ) => {
+      return await saveHtmlAsPdf(html, savePath, app, width, height);
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.PRINT_HTML_DOCUMENT,
+    async (_, html: string, width: number, height: number) => {
+      return await printHtmlDocument(html, app, width, height);
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.SAVE_DATA,
+    async (_, data: string, savePath: string) => {
+      return await fs.writeFile(savePath, data, { encoding: 'utf-8' });
+    }
+  );
+
+  ipcMain.handle(IPC_ACTIONS.SEND_ERROR, async (_, bodyJson: string) => {
+    await sendError(bodyJson, main);
+  });
+
+  ipcMain.handle(IPC_ACTIONS.CHECK_FOR_UPDATES, async () => {
+    if (main.isDevelopment || main.checkedForUpdate) {
+      return;
+    }
+
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (error) {
+      if (isNetworkError(error as Error)) {
+        return;
+      }
+
+      emitMainProcessError(error);
+    }
+    main.checkedForUpdate = true;
+  });
+
+  ipcMain.handle(IPC_ACTIONS.GET_LANGUAGE_MAP, async (_, code: string) => {
+    const obj = { languageMap: {}, success: true, message: '' };
+    try {
+      obj.languageMap = await getLanguageMap(code);
+    } catch (err) {
+      obj.success = false;
+      obj.message = (err as Error).message;
+    }
+
+    return obj;
+  });
+
+  ipcMain.handle(
+    IPC_ACTIONS.SELECT_FILE,
+    async (_, options: SelectFileOptions): Promise<SelectFileReturn> => {
+      const response: SelectFileReturn = {
+        name: '',
+        filePath: '',
+        success: false,
+        data: Buffer.from('', 'utf-8'),
+        canceled: false,
+      };
+      const { filePaths, canceled } = await dialog.showOpenDialog(
+        main.mainWindow!,
+        { ...options, properties: ['openFile'] }
+      );
+
+      response.filePath = filePaths?.[0];
+      response.canceled = canceled;
+
+      if (!response.filePath) {
+        return response;
+      }
+
+      response.success = true;
+      if (canceled) {
+        return response;
+      }
+
+      response.name = path.basename(response.filePath);
+      response.data = await fs.readFile(response.filePath);
+      return response;
+    }
+  );
+
+  ipcMain.handle(IPC_ACTIONS.GET_CREDS, () => {
+    return getUrlAndTokenString();
+  });
+
+  ipcMain.handle(IPC_ACTIONS.DELETE_FILE, async (_, filePath: string) => {
+    return getErrorHandledReponse(async () => await fs.unlink(filePath));
+  });
+
+  ipcMain.handle(IPC_ACTIONS.GET_DB_LIST, async () => {
+    const files = await setAndGetCleanedConfigFiles();
+    return await getConfigFilesWithModified(files);
+  });
+
+  ipcMain.handle(IPC_ACTIONS.GET_ENV, async () => {
+    let version = app.getVersion();
+    if (main.isDevelopment) {
+      const packageJson = await fs.readFile('package.json', 'utf-8');
+      version = (JSON.parse(packageJson) as { version: string }).version;
+    }
+
+    return {
+      isDevelopment: main.isDevelopment,
+      platform: process.platform,
+      version,
+    };
+  });
+
+  ipcMain.handle(
+    IPC_ACTIONS.GET_TEMPLATES,
+    async (_, posPrintWidth?: number) => {
+      return getTemplates(posPrintWidth);
+    }
+  );
+
+  ipcMain.handle(IPC_ACTIONS.INIT_SHEDULER, async (_, interval: string) => {
+    return initScheduler(interval);
+  });
+
+  ipcMain.handle(
+    IPC_ACTIONS.SEND_API_REQUEST,
+    async (e, endpoint: string, options: RequestInit | undefined) => {
+      return sendAPIRequest(endpoint, options);
+    }
+  );
+
+  /**
+   * Database Related Actions
+   */
+
+  ipcMain.handle(
+    IPC_ACTIONS.DB_CREATE,
+    async (_, dbPath: string, countryCode: string) => {
+      return await getErrorHandledReponse(async () => {
+        return await databaseManager.createNewDatabase(dbPath, countryCode);
+      });
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.DB_CONNECT,
+    async (_, dbPath: string, countryCode?: string) => {
+      return await getErrorHandledReponse(async () => {
+        return await databaseManager.connectToDatabase(dbPath, countryCode);
+      });
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.DB_CALL,
+    async (_, method: DatabaseMethod, ...args: unknown[]) => {
+      return await getErrorHandledReponse(async () => {
+        return await databaseManager.call(method, ...args);
+      });
+    }
+  );
+
+  ipcMain.handle(
+    IPC_ACTIONS.DB_BESPOKE,
+    async (_, method: string, ...args: unknown[]) => {
+      return await getErrorHandledReponse(async () => {
+        return await databaseManager.callBespoke(method, ...args);
+      });
+    }
+  );
+
+  ipcMain.handle(IPC_ACTIONS.DB_SCHEMA, async () => {
+    return await getErrorHandledReponse(() => {
+      return databaseManager.getSchemaMap();
+    });
+  });
+}
+===== main\registerAppLifecycleListeners.ts
+import { app } from 'electron';
+import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer';
+import { Main } from '../main';
+import { rendererLog } from './helpers';
+import { emitMainProcessError } from 'backend/helpers';
+
+export default function registerAppLifecycleListeners(main: Main) {
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+
+  app.on('activate', () => {
+    if (main.mainWindow === null) {
+      main.createWindow().catch((err) => emitMainProcessError(err));
+    }
+  });
+
+  app.on('ready', () => {
+    if (main.isDevelopment && !main.isTest) {
+      installDevTools(main).catch((err) => emitMainProcessError(err));
+    }
+
+    main.createWindow().catch((err) => emitMainProcessError(err));
+  });
+}
+
+async function installDevTools(main: Main) {
+  try {
+    await installExtension(VUEJS3_DEVTOOLS);
+  } catch (e) {
+    rendererLog(main, 'Vue Devtools failed to install', e);
+  }
+}
+===== backend\database\manager.ts
+import BetterSQLite3 from 'better-sqlite3';
+import fs from 'fs-extra';
+import { DatabaseError } from 'fyo/utils/errors';
+import path from 'path';
+import { DatabaseDemuxBase, DatabaseMethod } from 'utils/db/types';
+import { getMapFromList } from 'utils/index';
+import { Version } from 'utils/version';
+import { getSchemas } from '../../schemas';
+import { databaseMethodSet, unlinkIfExists } from '../helpers';
+import patches from '../patches';
+import { BespokeQueries } from './bespoke';
+import DatabaseCore from './core';
+import { runPatches } from './runPatch';
+import { BespokeFunction, Patch, RawCustomField } from './types';
+
+export class DatabaseManager extends DatabaseDemuxBase {
+  db?: DatabaseCore;
+  rawCustomFields: RawCustomField[] = [];
+
+  get #isInitialized(): boolean {
+    return this.db !== undefined && this.db.knex !== undefined;
+  }
+
+  getSchemaMap() {
+    if (this.#isInitialized) {
+      return this.db?.schemaMap ?? getSchemas('-', this.rawCustomFields);
+    }
+
+    return getSchemas('-', this.rawCustomFields);
+  }
+
+  async createNewDatabase(dbPath: string, countryCode: string) {
+    await unlinkIfExists(dbPath);
+    return await this.connectToDatabase(dbPath, countryCode);
+  }
+
+  async connectToDatabase(dbPath: string, countryCode?: string) {
+    countryCode = await this._connect(dbPath, countryCode);
+    await this.#migrate();
+    return countryCode;
+  }
+
+  async _connect(dbPath: string, countryCode?: string) {
+    countryCode ??= await DatabaseCore.getCountryCode(dbPath);
+    this.db = new DatabaseCore(dbPath);
+    await this.db.connect();
+    await this.setRawCustomFields();
+    const schemaMap = getSchemas(countryCode, this.rawCustomFields);
+    this.db.setSchemaMap(schemaMap);
+    return countryCode;
+  }
+
+  async setRawCustomFields() {
+    try {
+      this.rawCustomFields = (await this.db?.knex?.(
+        'CustomField'
+      )) as RawCustomField[];
+    } catch {}
+  }
+
+  async #migrate(): Promise<void> {
+    if (!this.#isInitialized) {
+      return;
+    }
+
+    const isFirstRun = await this.#getIsFirstRun();
+    if (isFirstRun) {
+      await this.db!.migrate();
+    }
+
+    await this.#executeMigration();
+  }
+
+  async #executeMigration() {
+    const version = await this.#getAppVersion();
+    const patches = await this.#getPatchesToExecute(version);
+
+    const hasPatches = !!patches.pre.length || !!patches.post.length;
+    if (hasPatches) {
+      await this.#createBackup();
+    }
+
+    await runPatches(patches.pre, this, version);
+    await this.db!.migrate({
+      pre: async () => {
+        if (hasPatches) {
+          return;
+        }
+
+        await this.#createBackup();
+      },
+    });
+    await runPatches(patches.post, this, version);
+  }
+
+  async #getPatchesToExecute(
+    version: string
+  ): Promise<{ pre: Patch[]; post: Patch[] }> {
+    if (this.db === undefined) {
+      return { pre: [], post: [] };
+    }
+
+    const query = (await this.db.knex!('PatchRun').select()) as {
+      name: string;
+      version?: string;
+      failed?: boolean;
+    }[];
+
+    const runPatchesMap = getMapFromList(query, 'name');
+    /**
+     * A patch is run only if:
+     * - it hasn't run and was added in a future version
+     *    i.e. app version is before patch added version
+     * - it ran but failed in some other version (i.e fixed)
+     */
+    const filtered = patches
+      .filter((p) => {
+        const exec = runPatchesMap[p.name];
+        if (!exec && Version.lte(version, p.version)) {
+          return true;
+        }
+
+        if (exec?.failed && exec?.version !== version) {
+          return true;
+        }
+
+        return false;
+      })
+      .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+
+    return {
+      pre: filtered.filter((p) => p.patch.beforeMigrate),
+      post: filtered.filter((p) => !p.patch.beforeMigrate),
+    };
+  }
+
+  async call(method: DatabaseMethod, ...args: unknown[]) {
+    if (!this.#isInitialized) {
+      return;
+    }
+
+    if (!databaseMethodSet.has(method)) {
+      return;
+    }
+
+    // @ts-ignore
+    const response = await this.db[method](...args);
+    if (method === 'close') {
+      delete this.db;
+    }
+
+    return response;
+  }
+
+  async callBespoke(method: string, ...args: unknown[]): Promise<unknown> {
+    if (!this.#isInitialized) {
+      return;
+    }
+
+    if (!BespokeQueries.hasOwnProperty(method)) {
+      throw new DatabaseError(`invalid bespoke db function ${method}`);
+    }
+
+    const queryFunction: BespokeFunction =
+      BespokeQueries[method as keyof BespokeFunction];
+    return await queryFunction(this.db!, ...args);
+  }
+
+  async #getIsFirstRun(): Promise<boolean> {
+    const knex = this.db?.knex;
+    if (!knex) {
+      return true;
+    }
+
+    const query = await knex('sqlite_master').where({
+      type: 'table',
+      name: 'PatchRun',
+    });
+    return !query.length;
+  }
+
+  async #createBackup() {
+    const { dbPath } = this.db ?? {};
+    if (!dbPath || process.env.IS_TEST) {
+      return;
+    }
+
+    const backupPath = await this.#getBackupFilePath();
+    if (!backupPath) {
+      return;
+    }
+
+    const db = this.getDriver();
+    await db?.backup(backupPath).then(() => db.close());
+  }
+
+  async #getBackupFilePath() {
+    const { dbPath } = this.db ?? {};
+    if (dbPath === ':memory:' || !dbPath) {
+      return null;
+    }
+
+    let fileName = path.parse(dbPath).name;
+    if (fileName.endsWith('.books')) {
+      fileName = fileName.slice(0, -6);
+    }
+
+    const backupFolder = path.join(path.dirname(dbPath), 'backups');
+    const date = new Date().toISOString().split('T')[0];
+    const version = await this.#getAppVersion();
+    const backupFile = `${fileName}_${version}_${date}.books.db`;
+    fs.ensureDirSync(backupFolder);
+    return path.join(backupFolder, backupFile);
+  }
+
+  async #getAppVersion(): Promise<string> {
+    const knex = this.db?.knex;
+    if (!knex) {
+      return '0.0.0';
+    }
+
+    const query = await knex('SingleValue')
+      .select('value')
+      .where({ fieldname: 'version', parent: 'SystemSettings' });
+    const value = (query[0] as undefined | { value: string })?.value;
+    return value || '0.0.0';
+  }
+
+  getDriver() {
+    const { dbPath } = this.db ?? {};
+    if (!dbPath) {
+      return null;
+    }
+
+    return BetterSQLite3(dbPath, { readonly: true });
+  }
+}
+
+export default new DatabaseManager();
+===== main.ts
+// eslint-disable-next-line
+require('source-map-support').install({
+  handleUncaughtException: false,
+  environment: 'node',
+});
+
+import { emitMainProcessError } from 'backend/helpers';
+import {
+  app,
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  protocol,
+  ProtocolRequest,
+  ProtocolResponse,
+} from 'electron';
+import { autoUpdater } from 'electron-updater';
+import fs from 'fs';
+import path from 'path';
+import registerAppLifecycleListeners from './main/registerAppLifecycleListeners';
+import registerAutoUpdaterListeners from './main/registerAutoUpdaterListeners';
+import registerIpcMainActionListeners from './main/registerIpcMainActionListeners';
+import registerIpcMainMessageListeners from './main/registerIpcMainMessageListeners';
+import registerProcessListeners from './main/registerProcessListeners';
+
+export class Main {
+  title = 'Frappe Books';
+  icon: string;
+
+  winURL = '';
+  checkedForUpdate = false;
+  mainWindow: BrowserWindow | null = null;
+
+  WIDTH = 1200;
+  HEIGHT = process.platform === 'win32' ? 826 : 800;
+
+  constructor() {
+    this.icon = this.isDevelopment
+      ? path.resolve('./build/icon.png')
+      : path.join(__dirname, 'icons', '512x512.png');
+
+    protocol.registerSchemesAsPrivileged([
+      { scheme: 'app', privileges: { secure: true, standard: true } },
+    ]);
+
+    if (this.isDevelopment) {
+      autoUpdater.logger = console;
+    }
+
+    // https://github.com/electron-userland/electron-builder/issues/4987
+    app.commandLine.appendSwitch('disable-http2');
+    autoUpdater.requestHeaders = {
+      'Cache-Control':
+        'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+    };
+
+    this.registerListeners();
+    if (this.isMac && this.isDevelopment) {
+      app.dock.setIcon(this.icon);
+    }
+  }
+
+  get isDevelopment() {
+    return process.env.NODE_ENV === 'development';
+  }
+
+  get isTest() {
+    return !!process.env.IS_TEST;
+  }
+
+  get isMac() {
+    return process.platform === 'darwin';
+  }
+
+  get isLinux() {
+    return process.platform === 'linux';
+  }
+
+  registerListeners() {
+    registerIpcMainMessageListeners(this);
+    registerIpcMainActionListeners(this);
+    registerAutoUpdaterListeners(this);
+    registerAppLifecycleListeners(this);
+    registerProcessListeners(this);
+  }
+
+  getOptions(): BrowserWindowConstructorOptions {
+    const preload = path.join(__dirname, 'main', 'preload.js');
+    const options: BrowserWindowConstructorOptions = {
+      width: this.WIDTH,
+      height: this.HEIGHT,
+      title: this.title,
+      titleBarStyle: 'hidden',
+      trafficLightPosition: { x: 16, y: 16 },
+      webPreferences: {
+        contextIsolation: true,
+        nodeIntegration: false,
+        sandbox: false,
+        preload,
+      },
+      autoHideMenuBar: true,
+      frame: !this.isMac,
+      resizable: true,
+    };
+
+    if (this.isDevelopment || this.isLinux) {
+      Object.assign(options, { icon: this.icon });
+    }
+
+    if (this.isLinux) {
+      Object.assign(options, {
+        icon: path.join(__dirname, '/icons/512x512.png'),
+      });
+    }
+
+    return options;
+  }
+
+  async createWindow() {
+    const options = this.getOptions();
+    this.mainWindow = new BrowserWindow(options);
+
+    if (this.isDevelopment) {
+      this.setViteServerURL();
+    } else {
+      this.registerAppProtocol();
+    }
+
+    await this.mainWindow.loadURL(this.winURL);
+    if (this.isDevelopment && !this.isTest) {
+      this.mainWindow.webContents.openDevTools();
+    }
+
+    this.setMainWindowListeners();
+  }
+
+  setViteServerURL() {
+    let port = 6969;
+    let host = '0.0.0.0';
+
+    if (process.env.VITE_PORT && process.env.VITE_HOST) {
+      port = Number(process.env.VITE_PORT);
+      host = process.env.VITE_HOST;
+    }
+
+    // Load the url of the dev server if in development mode
+    this.winURL = `http://${host}:${port}/`;
+  }
+
+  registerAppProtocol() {
+    protocol.registerBufferProtocol('app', bufferProtocolCallback);
+
+    // Use the registered protocol url to load the files.
+    this.winURL = 'app://./index.html';
+  }
+
+  setMainWindowListeners() {
+    if (this.mainWindow === null) {
+      return;
+    }
+
+    this.mainWindow.on('closed', () => {
+      this.mainWindow = null;
+    });
+
+    this.mainWindow.webContents.on('did-fail-load', () => {
+      this.mainWindow!.loadURL(this.winURL).catch((err) =>
+        emitMainProcessError(err)
+      );
+    });
+  }
+}
+
+/**
+ * Callback used to register the custom app protocol,
+ * during prod, files are read and served by using this
+ * protocol.
+ */
+function bufferProtocolCallback(
+  request: ProtocolRequest,
+  callback: (response: ProtocolResponse) => void
+) {
+  const { pathname, host } = new URL(request.url);
+  const filePath = path.join(
+    __dirname,
+    'src',
+    decodeURI(host),
+    decodeURI(pathname)
+  );
+
+  fs.readFile(filePath, (_, data) => {
+    const extension = path.extname(filePath).toLowerCase();
+    const mimeType =
+      {
+        '.js': 'text/javascript',
+        '.css': 'text/css',
+        '.html': 'text/html',
+        '.svg': 'image/svg+xml',
+        '.json': 'application/json',
+      }[extension] ?? '';
+
+    callback({ mimeType, data });
+  });
+}
+
+export default new Main();
+===== config search
+
+utils\config.ts:1:import Store from 'electron-store';
+utils\config.ts:4:const config = new Store<ConfigMap>();
+src\utils\initialization.ts:129:  let deviceId = fyo.config.get('deviceId');
+src\utils\initialization.ts:132:    fyo.config.set('deviceId', deviceId);
+src\utils\initialization.ts:179:  const configFile = fyo.config.get('files', []) as ConfigFile[];
+src\utils\language.ts:34:  const oldLanguage = fyo.config.get('language') as string;
+src\utils\language.ts:49:    fyo.config.set('language', language);
+src\utils\misc.ts:81:  const configFiles = fyo.config.get('files', []) as ConfigFile[];
+src\utils\misc.ts:100:  fyo.config.set('files', configFiles);
+
+
