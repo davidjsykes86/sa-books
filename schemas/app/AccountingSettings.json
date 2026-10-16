@@ -178,6 +178,59 @@
       "section": "Fiscal Year"
     },
     {
+      "fieldname": "companyRegNo",
+      "label": "Company Registration No.",
+      "fieldtype": "Data",
+      "placeholder": "2026/123456/07",
+      "section": "South Africa"
+    },
+    {
+      "fieldname": "vatRegistered",
+      "label": "VAT Registered",
+      "fieldtype": "Check",
+      "default": false,
+      "section": "South Africa"
+    },
+    {
+      "fieldname": "vatNumber",
+      "label": "VAT Number",
+      "fieldtype": "Data",
+      "placeholder": "4xxxxxxxxx",
+      "section": "South Africa"
+    },
+    {
+      "fieldname": "vatRegistrationDate",
+      "label": "VAT Registration Date",
+      "fieldtype": "Date",
+      "section": "South Africa"
+    },
+    {
+      "fieldname": "vatCategory",
+      "label": "VAT Category",
+      "fieldtype": "Select",
+      "default": "A",
+      "options": [
+        { "value": "A", "label": "A - 2-monthly (Jan, Mar, May...)" },
+        { "value": "B", "label": "B - 2-monthly (Feb, Apr, Jun...)" },
+        { "value": "C", "label": "C - Monthly" },
+        { "value": "D", "label": "D - 6-monthly (Feb, Aug)" },
+        { "value": "E", "label": "E - Annual" },
+        { "value": "F", "label": "F - 4-monthly (Feb, Jun, Oct)" }
+      ],
+      "section": "South Africa"
+    },
+    {
+      "fieldname": "vatBasis",
+      "label": "VAT Basis",
+      "fieldtype": "Select",
+      "default": "Invoice",
+      "options": [
+        { "value": "Invoice", "label": "Invoice basis" },
+        { "value": "Payments", "label": "Payments basis" }
+      ],
+      "section": "South Africa"
+    },
+    {
       "fieldname": "setupComplete",
       "label": "Setup Complete",
       "fieldtype": "Check",
