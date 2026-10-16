@@ -39,6 +39,49 @@
           :errors="errors"
           @value-change="onValueChange"
         />
+
+        <!-- SA Local Backup -->
+        <div v-if="showBackup" class="p-4 border-t dark:border-gray-800">
+          <h2
+            class="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-25"
+          >
+            {{ t`Backup` }}
+          </h2>
+          <p class="text-sm text-gray-700 dark:text-gray-200 mb-3 break-all">
+            {{
+              backupFolder
+                ? t`Backup folder: ${backupFolder}`
+                : t`No backup folder chosen yet.`
+            }}
+          </p>
+          <div class="flex gap-2 flex-wrap">
+            <Button @click="chooseBackupFolder">
+              {{ backupFolder ? t`Change folder` : t`Choose folder` }}
+            </Button>
+            <Button
+              type="primary"
+              :disabled="!backupFolder || backupBusy"
+              @click="runBackupNow"
+            >
+              {{ backupBusy ? t`Backing up...` : t`Backup now` }}
+            </Button>
+            <Button v-if="backupOk && lastBackupPath" @click="showLastBackup">
+              {{ t`Show in folder` }}
+            </Button>
+          </div>
+          <p
+            v-if="backupMessage"
+            class="text-sm mt-3 break-all"
+            :class="backupOk ? 'text-green-600' : 'text-red-600'"
+          >
+            {{ backupMessage }}
+          </p>
+          <p class="text-xs mt-3 text-gray-600 dark:text-gray-400">
+            {{
+              t`A backup is also made automatically when Frappe Books closes. The last 30 backups per company are kept.`
+            }}
+          </p>
+        </div>
       </div>
 
       <!-- Tab Bar -->
@@ -101,6 +144,20 @@ import CommonFormSection from '../CommonForm/CommonFormSection.vue';
 
 const COMPONENT_NAME = 'Settings';
 
+type SABackupApi = {
+  getFolder(): Promise<string | null>;
+  chooseFolder(): Promise<string | null>;
+  backupNow(): Promise<{
+    success: boolean;
+    filePath?: string;
+    message?: string;
+  }>;
+};
+
+function getSABackup(): SABackupApi | undefined {
+  return (window as unknown as { saBackup?: SABackupApi }).saBackup;
+}
+
 export default defineComponent({
   components: { FormContainer, Button, FormHeader, CommonFormSection },
   provide() {
@@ -116,10 +173,20 @@ export default defineComponent({
       errors: {},
       activeTab: ModelNameEnum.AccountingSettings,
       groupedFields: null,
+      backupFolder: null,
+      backupBusy: false,
+      backupMessage: '',
+      backupOk: false,
+      lastBackupPath: '',
     } as {
       errors: Record<string, string>;
       activeTab: string;
       groupedFields: null | UIGroupedFields;
+      backupFolder: string | null;
+      backupBusy: boolean;
+      backupMessage: string;
+      backupOk: boolean;
+      lastBackupPath: string;
     };
   },
   computed: {
@@ -133,6 +200,11 @@ export default defineComponent({
         ModelNameEnum.PrintSettings,
         ModelNameEnum.SystemSettings,
       ].some((s) => this.fyo.singles[s]?.canSave);
+    },
+    showBackup(): boolean {
+      return (
+        this.activeTab === ModelNameEnum.AccountingSettings && !!getSABackup()
+      );
     },
     doc(): Doc | null {
       const doc = this.fyo.singles[this.activeTab];
@@ -208,12 +280,15 @@ export default defineComponent({
     }
 
     this.update();
+    void this.loadBackupFolder();
   },
   activated(): void {
     const tab = this.$route.query.tab;
     if (typeof tab === 'string' && this.tabLabels[tab]) {
       this.activeTab = tab;
     }
+
+    void this.loadBackupFolder();
 
     docsPathRef.value = docsPathMap.Settings ?? '';
     this.shortcuts?.pmod.set(COMPONENT_NAME, ['KeyS'], async () => {
@@ -233,6 +308,55 @@ export default defineComponent({
     await this.reset();
   },
   methods: {
+    async loadBackupFolder(): Promise<void> {
+      const api = getSABackup();
+      if (!api) {
+        return;
+      }
+
+      this.backupFolder = await api.getFolder();
+    },
+    async chooseBackupFolder(): Promise<void> {
+      const api = getSABackup();
+      if (!api) {
+        return;
+      }
+
+      const folder = await api.chooseFolder();
+      if (folder) {
+        this.backupFolder = folder;
+        this.backupMessage = '';
+        this.backupOk = false;
+        this.lastBackupPath = '';
+      }
+    },
+    async runBackupNow(): Promise<void> {
+      const api = getSABackup();
+      if (!api || this.backupBusy) {
+        return;
+      }
+
+      this.backupBusy = true;
+      this.backupMessage = '';
+      try {
+        const result = await api.backupNow();
+        this.backupOk = result.success;
+        this.lastBackupPath = result.filePath ?? '';
+        this.backupMessage = result.success
+          ? this.t`Backup saved: ${result.filePath ?? ''}`
+          : result.message ?? this.t`Backup failed.`;
+      } catch (err) {
+        this.backupOk = false;
+        this.backupMessage = (err as Error).message;
+      } finally {
+        this.backupBusy = false;
+      }
+    },
+    showLastBackup(): void {
+      if (this.lastBackupPath) {
+        ipc.showItemInFolder(this.lastBackupPath);
+      }
+    },
     async reset() {
       const resetableDocs = this.schemas
         .map(({ name }) => this.fyo.singles[name])
