@@ -162,9 +162,7 @@ function getDate(dateString: string): string {
   const date = new Date(dateString);
   date.setMonth(date.getMonth());
 
-  return `${date.toLocaleString('default', {
-    month: 'short',
-  })} ${date.getDate()}, ${date.getFullYear()}`;
+  return [String(date.getDate()).padStart(2, '0'), String(date.getMonth() + 1).padStart(2, '0'), date.getFullYear()].join('/');
 }
 
 function getTime(dateString: string): string {

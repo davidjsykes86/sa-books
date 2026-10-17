@@ -79,7 +79,15 @@ export class CashbookBatch extends Transactional {
     });
   }
 
+  /**
+   * Pastel-style: an unfinished batch can always be saved as a draft.
+   * All checks (lines, balance, closed periods) run when it is updated.
+   */
   async validate() {
+    if (!this.submitted) {
+      return;
+    }
+
     this.validateLines();
     await super.validate();
   }
@@ -140,10 +148,6 @@ export class CashbookBatch extends Transactional {
     return posting;
   }
 
-  /**
-   * Posting: every line date must be in an open period.
-   * Reversal: reversing entries are dated today, so today's period must be open.
-   */
   override async validatePeriodLock(): Promise<void> {
     if (!this.submitted) {
       return;

@@ -142,6 +142,12 @@ function getReportSidebar() {
         name: 'trial-balance',
         route: '/report/TrialBalance',
       },
+      {
+        label: t`VAT201`,
+        name: 'vat201',
+        route: '/report/VAT201',
+        hidden: () => !fyo.singles.AccountingSettings?.vatRegistered,
+      },
     ],
   };
 }
@@ -271,16 +277,26 @@ function getCompleteSidebar(): SidebarConfig {
       label: t`Common`,
       name: 'common-entries',
       icon: 'common-entries',
-      route: '/list/CashbookBatch',
+      route: '/batch-entry/cashbook',
       items: [
         {
-          label: t`Cashbook`,
+          label: t`Process Cash Books`,
+          name: 'process-cash-books',
+          route: '/batch-entry/cashbook',
+        },
+        {
+          label: t`Process Journals`,
+          name: 'process-journals',
+          route: '/batch-entry/journal',
+        },
+        {
+          label: t`Cash Book Batches`,
           name: 'cashbook',
           route: '/list/CashbookBatch',
           schemaName: 'CashbookBatch',
         },
         {
-          label: t`Journals`,
+          label: t`Journal Batches`,
           name: 'journal-batches',
           route: '/list/JournalBatch',
           schemaName: 'JournalBatch',

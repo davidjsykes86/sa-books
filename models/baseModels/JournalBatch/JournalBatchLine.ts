@@ -1,19 +1,29 @@
 import { Doc } from 'fyo/model/doc';
 import {
+  ChangeArg,
   DefaultMap,
   FiltersMap,
   FormulaMap,
   HiddenMap,
+  ReadOnlyMap,
 } from 'fyo/model/types';
 import { Money } from 'pesa';
 import {
   calcVatInclusive,
   getTaxInfo,
+  LineType,
 } from '../CashbookBatch/batchHelpers';
 
+/**
+ * Pastel-style journal line: Type (GL / Customer / Supplier) then ONE
+ * Account box. In Customer / Supplier journals the type is fixed.
+ */
 export class JournalBatchLine extends Doc {
   date?: Date;
   reference?: string;
+  lineType?: LineType;
+  refType?: string;
+  entryAccount?: string;
   account?: string;
   party?: string;
   description?: string;
@@ -27,6 +37,10 @@ export class JournalBatchLine extends Doc {
     return (this.parentdoc?.get('batchType') as string | undefined) ?? 'General';
   }
 
+  get isGL(): boolean {
+    return (this.lineType ?? 'GL') === 'GL';
+  }
+
   get vatEnabled(): boolean {
     return !!this.fyo.singles.AccountingSettings?.vatRegistered;
   }
@@ -38,14 +52,19 @@ export class JournalBatchLine extends Doc {
     return debit.isZero() ? credit : debit;
   }
 
-  async getVat(): Promise<Money> {
-    const zero = this.fyo.pesa(0);
-    if (!this.vatEnabled || !this.tax) {
-      return zero;
+  // VAT sits on the GL side: the line itself (General, GL line) or the
+  // contra account (Customer / Supplier journals).
+  get vatApplies(): boolean {
+    if (this.journalType === 'General') {
+      return this.isGL;
     }
 
-    // Customer/Supplier journals: VAT sits on the contra GL account.
-    if (this.journalType !== 'General' && !this.contraAccount) {
+    return !!this.contraAccount;
+  }
+
+  async getVat(): Promise<Money> {
+    const zero = this.fyo.pesa(0);
+    if (!this.vatEnabled || !this.tax || !this.vatApplies) {
       return zero;
     }
 
@@ -63,29 +82,68 @@ export class JournalBatchLine extends Doc {
   }
 
   formulas: FormulaMap = {
+    lineType: {
+      // Customer / Supplier journals: every line is that type.
+      formula: () =>
+        this.journalType === 'General' ? undefined : this.journalType,
+    },
+    refType: {
+      formula: () => (this.isGL ? 'Account' : 'Party'),
+      dependsOn: ['lineType'],
+    },
+    account: {
+      formula: () => (this.isGL ? this.entryAccount ?? '' : ''),
+      dependsOn: ['entryAccount', 'lineType'],
+    },
+    party: {
+      formula: () => (this.isGL ? '' : this.entryAccount ?? ''),
+      dependsOn: ['entryAccount', 'lineType'],
+    },
     vatAmount: {
       formula: async () => await this.getVat(),
-      dependsOn: ['debit', 'credit', 'tax', 'contraAccount'],
+      dependsOn: ['debit', 'credit', 'tax', 'contraAccount', 'lineType'],
     },
   };
 
+  async change(ch: ChangeArg) {
+    if (ch.changed === 'lineType' && this.entryAccount) {
+      await this.set('entryAccount', '');
+    }
+  }
+
+  readOnly: ReadOnlyMap = {
+    lineType: () => this.journalType !== 'General',
+  };
+
   hidden: HiddenMap = {
-    account: () => this.journalType !== 'General',
-    party: () => this.journalType === 'General',
     tax: () => !this.vatEnabled,
     vatAmount: () => !this.vatEnabled,
   };
 
   static filters: FiltersMap = {
-    account: () => ({ isGroup: false }),
+    entryAccount: (doc: Doc) => {
+      if (doc.lineType === 'Customer') {
+        return { role: ['in', ['Customer', 'Both']] };
+      }
+
+      if (doc.lineType === 'Supplier') {
+        return { role: ['in', ['Supplier', 'Both']] };
+      }
+
+      return { isGroup: false };
+    },
     contraAccount: () => ({ isGroup: false }),
-    party: (doc: Doc) =>
-      doc.parentdoc?.get('batchType') === 'Supplier'
-        ? { role: ['in', ['Supplier', 'Both']] }
-        : { role: ['in', ['Customer', 'Both']] },
   };
 
   static defaults: DefaultMap = {
+    lineType: (doc) => {
+      const type = doc?.parentdoc?.get('batchType') as string | undefined;
+      return type === 'Customer' || type === 'Supplier' ? type : 'GL';
+    },
+    refType: (doc) => {
+      const type = doc?.parentdoc?.get('batchType') as string | undefined;
+      return type === 'Customer' || type === 'Supplier' ? 'Party' : 'Account';
+    },
     date: (doc) =>
       (doc?.parentdoc?.date as Date | undefined) ?? new Date(),
   };

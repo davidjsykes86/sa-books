@@ -4,12 +4,17 @@ import { ModelNameEnum } from 'models/types';
 const FALLBACK_VAT_ACCOUNT = 'VAT Control';
 const FALLBACK_VAT_PARENT = 'Duties and Taxes';
 
-const SA_VAT_TEMPLATES: { name: string; vatType: string; rate: number }[] = [
-  { name: 'VAT 15% Standard', vatType: 'STD', rate: 15 },
-  { name: 'VAT 0% Zero-rated', vatType: 'ZERO', rate: 0 },
-  { name: 'VAT 0% Export', vatType: 'EXPORT', rate: 0 },
-  { name: 'VAT Exempt', vatType: 'EXEMPT', rate: 0 },
-  { name: 'VAT 15% Capital Goods', vatType: 'CAPITAL', rate: 15 },
+const SA_VAT_TEMPLATES: {
+  name: string;
+  code: string;
+  vatType: string;
+  rate: number;
+}[] = [
+  { name: 'VAT 15% Standard', code: '15', vatType: 'STD', rate: 15 },
+  { name: 'VAT 0% Zero-rated', code: '01', vatType: 'ZERO', rate: 0 },
+  { name: 'VAT 0% Export', code: '02', vatType: 'EXPORT', rate: 0 },
+  { name: 'VAT Exempt', code: '03', vatType: 'EXEMPT', rate: 0 },
+  { name: 'VAT 15% Capital Goods', code: '14', vatType: 'CAPITAL', rate: 15 },
 ];
 
 async function getVatAccount(fyo: Fyo): Promise<string> {
@@ -55,11 +60,17 @@ export async function setupSAVat(fyo: Fyo): Promise<void> {
   for (const t of SA_VAT_TEMPLATES) {
     const exists = await fyo.db.exists(ModelNameEnum.Tax, t.name);
     if (exists) {
+      // Backfill the short tax code on templates created before codes existed.
+      const doc = await fyo.doc.getDoc(ModelNameEnum.Tax, t.name);
+      if (!doc.get('code')) {
+        await doc.setAndSync('code', t.code);
+      }
       continue;
     }
 
     const tax = fyo.doc.getNewDoc(ModelNameEnum.Tax, {
       name: t.name,
+      code: t.code,
       vatType: t.vatType,
       details: [{ account: vatAccount, rate: t.rate }],
     });

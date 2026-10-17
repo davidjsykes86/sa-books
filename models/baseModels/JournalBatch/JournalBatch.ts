@@ -21,6 +21,7 @@ import {
   calcVatInclusive,
   getControlAccount,
   getTaxInfo,
+  LineType,
 } from '../CashbookBatch/batchHelpers';
 
 type JournalType = 'General' | 'Customer' | 'Supplier';
@@ -28,8 +29,11 @@ type JournalType = 'General' | 'Customer' | 'Supplier';
 /**
  * Pastel-style journal batch (General / Customer / Supplier).
  *
- * Each line is a Debit OR a Credit (VAT-inclusive).
- * - General: line account gets net + VAT on the line's side.
+ * Each line is a Debit OR a Credit (VAT-inclusive), with Type GL /
+ * Customer / Supplier and one Account box (Pastel style).
+ * - General, GL line: line account gets net + VAT on the line's side.
+ * - General, Customer/Supplier line: control account (with party) gets the
+ *   full amount, no VAT.
  *   With a contra account, the contra gets the full amount on the
  *   opposite side (line balances itself). Without contra, the batch
  *   as a whole must balance.
@@ -79,9 +83,10 @@ export class JournalBatch extends Transactional {
         );
       }
 
+      const lineType = (line.get('lineType') as LineType) ?? 'GL';
       const contra = line.get('contraAccount') as string | undefined;
 
-      if (type === 'General') {
+      if (lineType === 'GL') {
         const account = line.get('account') as string | undefined;
         if (!account) {
           throw new ValidationError(t`Line ${row}: choose a GL account.`);
@@ -92,23 +97,29 @@ export class JournalBatch extends Transactional {
             t`Line ${row}: contra account cannot be the same as the account.`
           );
         }
-      } else {
-        if (!line.get('party')) {
-          throw new ValidationError(
-            t`Line ${row}: choose a ${type.toLowerCase()}.`
-          );
-        }
+      } else if (!line.get('party')) {
+        throw new ValidationError(
+          t`Line ${row}: choose a ${lineType.toLowerCase()}.`
+        );
+      }
 
-        if (!contra) {
-          throw new ValidationError(
-            t`Line ${row}: choose a contra GL account.`
-          );
-        }
+      if (type !== 'General' && !contra) {
+        throw new ValidationError(
+          t`Line ${row}: choose a contra GL account.`
+        );
       }
     });
   }
 
+  /**
+   * Pastel-style: an unfinished batch can always be saved as a draft.
+   * All checks (lines, balance, closed periods) run when it is updated.
+   */
   async validate() {
+    if (!this.submitted) {
+      return;
+    }
+
     this.validateLines();
     await super.validate();
   }
@@ -134,7 +145,9 @@ export class JournalBatch extends Transactional {
 
       let vat = zero;
       let vatAccount: string | null = null;
-      const vatAllowed = type === 'General' || !!contra;
+      const lineType = (line.get('lineType') as LineType) ?? 'GL';
+      const vatAllowed =
+        type === 'General' ? lineType === 'GL' : !!contra;
       if (vatEnabled && tax && vatAllowed) {
         const info = await getTaxInfo(this.fyo, tax);
         if (info && info.rate > 0) {
@@ -158,13 +171,21 @@ export class JournalBatch extends Transactional {
           ...(isDebit ? { credit: value } : { debit: value }),
         });
 
-      if (type === 'General') {
+      if (type === 'General' && lineType === 'GL') {
         const account = line.get('account') as string;
         onSide(account, net);
         if (vatAccount && !vat.isZero()) {
           onSide(vatAccount, vat);
         }
 
+        if (contra) {
+          onOpposite(contra, amount);
+        }
+      } else if (type === 'General') {
+        // Customer / Supplier line in a General Journal: no VAT.
+        const party = line.get('party') as string;
+        const control = await getControlAccount(this.fyo, lineType);
+        onSide(control, amount, party);
         if (contra) {
           onOpposite(contra, amount);
         }

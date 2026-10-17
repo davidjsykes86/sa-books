@@ -15,16 +15,43 @@
       "fieldtype": "Data"
     },
     {
+      "fieldname": "lineType",
+      "label": "Type",
+      "fieldtype": "Select",
+      "options": [
+        { "value": "GL", "label": "GL" },
+        { "value": "Customer", "label": "Customer" },
+        { "value": "Supplier", "label": "Supplier" }
+      ],
+      "default": "GL",
+      "required": true
+    },
+    {
+      "fieldname": "refType",
+      "label": "Account Type",
+      "fieldtype": "Data",
+      "default": "Account",
+      "hidden": true
+    },
+    {
+      "fieldname": "entryAccount",
+      "label": "Account",
+      "fieldtype": "DynamicLink",
+      "references": "refType"
+    },
+    {
       "fieldname": "account",
       "label": "GL Account",
       "fieldtype": "Link",
-      "target": "Account"
+      "target": "Account",
+      "hidden": true
     },
     {
       "fieldname": "party",
       "label": "Customer / Supplier",
       "fieldtype": "Link",
-      "target": "Party"
+      "target": "Party",
+      "hidden": true
     },
     {
       "fieldname": "description",
@@ -62,8 +89,8 @@
   ],
   "tableFields": [
     "date",
-    "account",
-    "party",
+    "lineType",
+    "entryAccount",
     "debit",
     "credit",
     "contraAccount",
