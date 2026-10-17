@@ -1,0 +1,542 @@
+﻿===== schemas\app\JournalEntry.json
+{
+  "label": "Journal Entry",
+  "name": "JournalEntry",
+  "naming": "numberSeries",
+  "isSubmittable": true,
+  "fields": [
+    {
+      "label": "Entry No",
+      "fieldname": "name",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "numberSeries",
+      "label": "Number Series",
+      "fieldtype": "Link",
+      "target": "NumberSeries",
+      "create": true,
+      "required": true,
+      "default": "JV-",
+      "section": "Default"
+    },
+    {
+      "fieldname": "entryType",
+      "label": "Entry Type",
+      "fieldtype": "Select",
+      "placeholder": "Entry Type",
+      "options": [
+        {
+          "value": "Journal Entry",
+          "label": "Journal Entry"
+        },
+        {
+          "value": "Bank Entry",
+          "label": "Bank Entry"
+        },
+        {
+          "value": "Cash Entry",
+          "label": "Cash Entry"
+        },
+        {
+          "value": "Credit Card Entry",
+          "label": "Credit Card Entry"
+        },
+        {
+          "value": "Debit Note",
+          "label": "Debit Note"
+        },
+        {
+          "value": "Credit Note",
+          "label": "Credit Note"
+        },
+        {
+          "value": "Contra Entry",
+          "label": "Contra Entry"
+        },
+        {
+          "value": "Excise Entry",
+          "label": "Excise Entry"
+        },
+        {
+          "value": "Write Off Entry",
+          "label": "Write Off Entry"
+        },
+        {
+          "value": "Opening Entry",
+          "label": "Opening Entry"
+        },
+        {
+          "value": "Depreciation Entry",
+          "label": "Depreciation Entry"
+        }
+      ],
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "accounts",
+      "label": "Account Entries",
+      "fieldtype": "Table",
+      "target": "JournalEntryAccount",
+      "required": true,
+      "section": "Accounts"
+    },
+    {
+      "fieldname": "referenceNumber",
+      "label": "Reference Number",
+      "fieldtype": "Data",
+      "section": "References"
+    },
+    {
+      "fieldname": "referenceDate",
+      "label": "Reference Date",
+      "fieldtype": "Date",
+      "section": "References"
+    },
+    {
+      "fieldname": "userRemark",
+      "label": "User Remark",
+      "fieldtype": "Text",
+      "placeholder": "Add a remark",
+      "section": "References"
+    },
+    {
+      "fieldname": "attachment",
+      "placeholder": "Add attachment",
+      "label": "Attachment",
+      "fieldtype": "Attachment",
+      "section": "References"
+    }
+  ],
+  "keywordFields": ["name", "entryType"]
+}
+===== schemas\app\JournalEntryAccount.json
+{
+  "name": "JournalEntryAccount",
+  "label": "Journal Entry Account",
+  "isChild": true,
+  "fields": [
+    {
+      "fieldname": "account",
+      "label": "Account",
+      "placeholder": "Account",
+      "fieldtype": "Link",
+      "target": "Account",
+      "required": true,
+      "groupBy": "rootType"
+    },
+    {
+      "fieldname": "debit",
+      "label": "Debit",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "credit",
+      "label": "Credit",
+      "fieldtype": "Currency"
+    }
+  ],
+  "tableFields": ["account", "debit", "credit"],
+  "keywordFields": ["account"]
+}
+===== schemas\app\AccountingLedgerEntry.json
+{
+  "name": "AccountingLedgerEntry",
+  "label": "Accounting Ledger Entry",
+  "create": false,
+  "isSingle": false,
+  "isChild": false,
+  "naming": "autoincrement",
+  "fields": [
+    {
+      "label": "Entry No.",
+      "fieldname": "name",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "date",
+      "label": "Date",
+      "fieldtype": "Datetime",
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "party",
+      "label": "Party",
+      "fieldtype": "Link",
+      "target": "Party",
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "account",
+      "label": "Account",
+      "fieldtype": "Link",
+      "target": "Account",
+      "required": true,
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "debit",
+      "label": "Debit",
+      "fieldtype": "Currency",
+      "readOnly": true,
+      "section": "Details"
+    },
+    {
+      "fieldname": "credit",
+      "label": "Credit",
+      "fieldtype": "Currency",
+      "readOnly": true,
+      "section": "Details"
+    },
+    {
+      "fieldname": "referenceType",
+      "label": "Ref. Type",
+      "fieldtype": "Data",
+      "readOnly": true,
+      "section": "Reference"
+    },
+    {
+      "fieldname": "referenceName",
+      "label": "Ref. Name",
+      "fieldtype": "DynamicLink",
+      "references": "referenceType",
+      "readOnly": true,
+      "section": "Reference"
+    },
+    {
+      "fieldname": "reverted",
+      "label": "Reverted",
+      "fieldtype": "Check",
+      "default": false,
+      "readOnly": true,
+      "section": "Reference"
+    },
+    {
+      "fieldname": "reverts",
+      "label": "Reverts",
+      "fieldtype": "Link",
+      "target": "AccountingLedgerEntry",
+      "readOnly": true,
+      "section": "Reference"
+    }
+  ],
+  "quickEditFields": [
+    "date",
+    "account",
+    "party",
+    "debit",
+    "credit",
+    "referenceType",
+    "referenceName",
+    "reverted",
+    "reverts"
+  ]
+}
+===== models\baseModels\JournalEntry\JournalEntry.ts
+import { Fyo, t } from 'fyo';
+import { Doc } from 'fyo/model/doc';
+import {
+  Action,
+  DefaultMap,
+  FiltersMap,
+  HiddenMap,
+  ListViewSettings,
+} from 'fyo/model/types';
+import {
+  getDocStatus,
+  getLedgerLinkAction,
+  getNumberSeries,
+  getStatusText,
+  statusColor,
+} from 'models/helpers';
+import { Transactional } from 'models/Transactional/Transactional';
+import { Money } from 'pesa';
+import { LedgerPosting } from '../../Transactional/LedgerPosting';
+
+export class JournalEntry extends Transactional {
+  accounts?: Doc[];
+
+  async getPosting() {
+    const posting: LedgerPosting = new LedgerPosting(this, this.fyo);
+
+    for (const row of this.accounts ?? []) {
+      const debit = row.debit as Money;
+      const credit = row.credit as Money;
+      const account = row.account as string;
+
+      if (!debit.isZero()) {
+        await posting.debit(account, debit);
+      } else if (!credit.isZero()) {
+        await posting.credit(account, credit);
+      }
+    }
+
+    return posting;
+  }
+
+  hidden: HiddenMap = {
+    referenceNumber: () =>
+      !(this.referenceNumber || !(this.isSubmitted || this.isCancelled)),
+    referenceDate: () =>
+      !(this.referenceDate || !(this.isSubmitted || this.isCancelled)),
+    userRemark: () =>
+      !(this.userRemark || !(this.isSubmitted || this.isCancelled)),
+    attachment: () =>
+      !(this.attachment || !(this.isSubmitted || this.isCancelled)),
+  };
+
+  static defaults: DefaultMap = {
+    numberSeries: (doc) => getNumberSeries(doc.schemaName, doc.fyo),
+    date: () => new Date(),
+  };
+
+  static filters: FiltersMap = {
+    numberSeries: () => ({ referenceType: 'JournalEntry' }),
+  };
+
+  static getActions(fyo: Fyo): Action[] {
+    return [getLedgerLinkAction(fyo)];
+  }
+
+  static getListViewSettings(): ListViewSettings {
+    return {
+      columns: [
+        'name',
+        {
+          label: t`Status`,
+          fieldname: 'status',
+          fieldtype: 'Select',
+          render(doc) {
+            const status = getDocStatus(doc);
+            const color = statusColor[status] ?? 'gray';
+            const label = getStatusText(status);
+
+            return {
+              template: `<Badge class="text-xs" color="${color}">${label}</Badge>`,
+            };
+          },
+        },
+        'date',
+        'entryType',
+        'referenceNumber',
+      ],
+    };
+  }
+}
+===== models\baseModels\AccountingLedgerEntry\AccountingLedgerEntry.ts
+import { Doc } from 'fyo/model/doc';
+import { ListViewSettings } from 'fyo/model/types';
+import { ModelNameEnum } from 'models/types';
+import { Money } from 'pesa';
+
+export class AccountingLedgerEntry extends Doc {
+  date?: string | Date;
+  account?: string;
+  party?: string;
+  debit?: Money;
+  credit?: Money;
+  referenceType?: string;
+  referenceName?: string;
+  reverted?: boolean;
+
+  async revert() {
+    if (this.reverted) {
+      return;
+    }
+
+    await this.set('reverted', true);
+    const revertedEntry = this.fyo.doc.getNewDoc(
+      ModelNameEnum.AccountingLedgerEntry,
+      {
+        account: this.account,
+        party: this.party,
+        date: new Date(),
+        referenceType: this.referenceType,
+        referenceName: this.referenceName,
+        debit: this.credit,
+        credit: this.debit,
+        reverted: true,
+        reverts: this.name,
+      }
+    );
+
+    await this.sync();
+    await revertedEntry.sync();
+  }
+
+  static getListViewSettings(): ListViewSettings {
+    return {
+      columns: ['date', 'account', 'party', 'debit', 'credit', 'referenceName'],
+    };
+  }
+}
+===== schemas\app\Party.json
+{
+  "name": "Party",
+  "label": "Party",
+  "naming": "manual",
+  "fields": [
+    {
+      "fieldname": "image",
+      "label": "Image",
+      "fieldtype": "AttachImage",
+      "section": "Default"
+    },
+    {
+      "fieldname": "name",
+      "label": "Name",
+      "fieldtype": "Data",
+      "required": true,
+      "placeholder": "Full Name",
+      "section": "Default"
+    },
+    {
+      "fieldname": "role",
+      "label": "Role",
+      "fieldtype": "Select",
+      "default": "Both",
+      "options": [
+        {
+          "value": "Both",
+          "label": "Both"
+        },
+        {
+          "value": "Supplier",
+          "label": "Supplier"
+        },
+        {
+          "value": "Customer",
+          "label": "Customer"
+        }
+      ],
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "email",
+      "label": "Email",
+      "fieldtype": "Data",
+      "placeholder": "john@doe.com",
+      "section": "Contacts"
+    },
+    {
+      "fieldname": "phone",
+      "label": "Phone",
+      "fieldtype": "Data",
+      "placeholder": "Phone",
+      "section": "Contacts"
+    },
+    {
+      "fieldname": "address",
+      "label": "Address",
+      "fieldtype": "Link",
+      "target": "Address",
+      "create": true,
+      "section": "Contacts"
+    },
+    {
+      "fieldname": "defaultAccount",
+      "label": "Default Account",
+      "fieldtype": "Link",
+      "target": "Account",
+      "create": true,
+      "section": "Billing"
+    },
+    {
+      "fieldname": "currency",
+      "label": "Currency",
+      "fieldtype": "Link",
+      "target": "Currency",
+      "placeholder": "INR",
+      "create": true,
+      "section": "Billing"
+    },
+    {
+      "fieldname": "fromLead",
+      "label": "From Lead",
+      "fieldtype": "Link",
+      "target": "Lead",
+      "readOnly": true,
+      "section": "References"
+    },
+
+    {
+      "fieldname": "loyaltyProgram",
+      "label": "Loyalty Program",
+      "fieldtype": "Link",
+      "target": "LoyaltyProgram",
+      "create": true,
+      "section": "Loyalty Program"
+    },
+    {
+      "fieldname": "loyaltyPoints",
+      "label": "Loyalty Points",
+      "fieldtype": "Int",
+      "readOnly": true,
+      "default": 0,
+      "section": "Loyalty Program"
+    },
+    {
+      "fieldname": "taxId",
+      "label": "Tax ID",
+      "fieldtype": "Data",
+      "section": "Billing"
+    },
+    {
+      "fieldname": "outstandingAmount",
+      "label": "Outstanding Amount",
+      "fieldtype": "Currency",
+      "hidden": true
+    }
+  ],
+  "quickEditFields": [
+    "email",
+    "phone",
+    "address",
+    "defaultAccount",
+    "loyaltyProgram",
+    "currency",
+    "role",
+    "taxId"
+  ],
+  "keywordFields": ["name", "email", "role"]
+}
+===== schemas\meta\submittable.json
+{
+  "name": "submittable",
+  "fields": [
+    {
+      "fieldname": "submitted",
+      "label": "Submitted",
+      "fieldtype": "Check",
+      "required": true,
+      "meta": true,
+      "section": "System"
+    },
+    {
+      "fieldname": "cancelled",
+      "label": "Cancelled",
+      "fieldtype": "Check",
+      "required": true,
+      "meta": true,
+      "section": "System"
+    }
+  ]
+}

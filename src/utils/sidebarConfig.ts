@@ -274,6 +274,12 @@ function getCompleteSidebar(): SidebarConfig {
       route: '/list/JournalEntry',
       items: [
         {
+          label: t`Cashbook`,
+          name: 'cashbook',
+          route: '/list/CashbookBatch',
+          schemaName: 'CashbookBatch',
+        },
+        {
           label: t`Journal Entry`,
           name: 'journal-entry',
           route: '/list/JournalEntry',

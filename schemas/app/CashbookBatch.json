@@ -1,0 +1,72 @@
+{
+  "name": "CashbookBatch",
+  "label": "Cashbook Batch",
+  "naming": "autoincrement",
+  "isSubmittable": true,
+  "fields": [
+    {
+      "fieldname": "name",
+      "label": "Batch No",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "batchType",
+      "label": "Batch Type",
+      "fieldtype": "Select",
+      "options": [
+        { "value": "Payments", "label": "Payments" },
+        { "value": "Receipts", "label": "Receipts" }
+      ],
+      "default": "Payments",
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "bankAccount",
+      "label": "Bank Account",
+      "fieldtype": "Link",
+      "target": "Account",
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "date",
+      "label": "Batch Date",
+      "fieldtype": "Date",
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "lines",
+      "label": "Lines",
+      "fieldtype": "Table",
+      "target": "CashbookLine",
+      "required": true,
+      "section": "Lines"
+    },
+    {
+      "fieldname": "totalAmount",
+      "label": "Total (incl. VAT)",
+      "fieldtype": "Currency",
+      "readOnly": true,
+      "section": "Totals"
+    },
+    {
+      "fieldname": "totalVat",
+      "label": "Total VAT",
+      "fieldtype": "Currency",
+      "readOnly": true,
+      "section": "Totals"
+    },
+    {
+      "fieldname": "remarks",
+      "label": "Remarks",
+      "fieldtype": "Text",
+      "section": "Totals"
+    }
+  ],
+  "keywordFields": ["name", "batchType", "bankAccount"]
+}
