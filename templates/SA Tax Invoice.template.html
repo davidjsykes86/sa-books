@@ -1,0 +1,165 @@
+<main class="bg-white h-full text-gray-900" :style="{ 'font-family': print.font }">
+  <!-- Header: supplier details + document title -->
+  <header class="px-12 pt-10 pb-6 flex justify-between items-start border-b">
+    <section class="flex items-start">
+      <img
+        v-if="print.displayLogo && print.logo"
+        class="h-14 max-w-32 object-contain mr-4"
+        :src="print.logo"
+      />
+      <div class="text-sm">
+        <p class="font-semibold text-xl" :style="{ color: print.color }">
+          {{ print.companyName }}
+        </p>
+        <p v-if="print.address" class="whitespace-pre-line text-gray-800">
+          {{ print.links.address.addressDisplay }}
+        </p>
+        <p v-if="print.phone" class="text-gray-800">Tel: {{ print.phone }}</p>
+        <p v-if="print.email" class="text-gray-800">{{ print.email }}</p>
+        <p v-if="print.companyRegNo" class="text-gray-800">
+          Reg. No: {{ print.companyRegNo }}
+        </p>
+        <p v-if="print.vatRegistered && print.vatNumber" class="font-semibold">
+          VAT No: {{ print.vatNumber }}
+        </p>
+      </div>
+    </section>
+
+    <section class="text-right">
+      <h1 class="text-3xl font-bold uppercase" :style="{ color: print.color }">
+        <template v-if="doc.entryType === 'SalesQuote'">Quotation</template>
+        <template v-else-if="doc.entryType === 'PurchaseInvoice'">
+          {{ doc.returnAgainst ? 'Supplier Credit Note' : 'Supplier Invoice' }}
+        </template>
+        <template v-else-if="doc.returnAgainst">
+          {{ print.vatRegistered ? 'Tax Credit Note' : 'Credit Note' }}
+        </template>
+        <template v-else>
+          {{ print.vatRegistered ? 'Tax Invoice' : 'Invoice' }}
+        </template>
+      </h1>
+      <p class="mt-2 text-lg font-semibold">{{ doc.name }}</p>
+      <p class="text-gray-800">Date: {{ doc.date }}</p>
+      <p v-if="doc.returnAgainst" class="text-gray-800">
+        Against: {{ doc.returnAgainst }}
+      </p>
+    </section>
+  </header>
+
+  <!-- Recipient (customer / supplier) -->
+  <section class="px-12 py-6 text-sm flex">
+    <div class="w-1/2">
+      <h3 class="font-semibold text-gray-600 uppercase text-xs mb-1">
+        {{ doc.entryType === 'PurchaseInvoice' ? 'Supplier' : 'Bill To' }}
+      </h3>
+      <div v-if="doc.party">
+        <p class="font-semibold text-base">{{ doc.party }}</p>
+        <p v-if="doc.links.party.code" class="text-gray-600">
+          Account: {{ doc.links.party.code }}
+        </p>
+        <p
+          v-if="doc.links.party.address"
+          class="whitespace-pre-line text-gray-800"
+        >
+          {{ doc.links.party.links.address.addressDisplay }}
+        </p>
+        <p v-if="doc.links.party.taxId" class="font-semibold">
+          VAT No: {{ doc.links.party.taxId }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Line items -->
+  <section class="px-12 text-sm">
+    <div class="flex font-semibold border-b-2 border-gray-800 pb-2">
+      <div class="w-6/12">Description</div>
+      <div class="w-1/12 text-right">Qty</div>
+      <div class="w-2/12 text-right">
+        {{ print.vatRegistered ? 'Unit Price (excl.)' : 'Unit Price' }}
+      </div>
+      <div class="w-3/12 text-right">
+        {{ print.vatRegistered ? 'Amount (excl. VAT)' : 'Amount' }}
+      </div>
+    </div>
+
+    <div
+      class="flex py-2 border-b border-gray-200"
+      v-for="row in doc.items"
+      :key="row.name"
+    >
+      <div class="w-6/12">
+        <p>{{ row.item }}</p>
+        <p v-if="row.description" class="text-gray-600 whitespace-pre-line">
+          {{ row.description }}
+        </p>
+      </div>
+      <div class="w-1/12 text-right">{{ row.quantity || row.qty }}</div>
+      <div class="w-2/12 text-right">{{ row.rate }}</div>
+      <div class="w-3/12 text-right">{{ row.amount }}</div>
+    </div>
+  </section>
+
+  <!-- Totals -->
+  <footer class="px-12 py-6 text-sm">
+    <section class="flex justify-end">
+      <div class="w-5/12">
+        <div class="flex justify-between py-1">
+          <span>{{ print.vatRegistered ? 'Total (excl. VAT)' : 'Subtotal' }}</span>
+          <span>{{ doc.netTotal }}</span>
+        </div>
+
+        <div
+          class="flex justify-between py-1"
+          v-if="doc.totalDiscount && !doc.discountAfterTax"
+        >
+          <span>Discount</span>
+          <span>{{ doc.totalDiscount }}</span>
+        </div>
+
+        <div
+          class="flex justify-between py-1"
+          v-for="tax in doc.taxes"
+          :key="tax.name"
+        >
+          <span>VAT @ {{ tax.rate }}%</span>
+          <span>{{ tax.amount }}</span>
+        </div>
+
+        <div
+          class="flex justify-between py-1"
+          v-if="doc.totalDiscount && doc.discountAfterTax"
+        >
+          <span>Discount</span>
+          <span>{{ doc.totalDiscount }}</span>
+        </div>
+
+        <div
+          class="flex justify-between py-2 mt-1 px-2 text-white font-semibold text-base"
+          :style="{ backgroundColor: print.color }"
+        >
+          <span>{{ print.vatRegistered ? 'Total (incl. VAT)' : 'Total' }}</span>
+          <span>{{ doc.grandTotal }}</span>
+        </div>
+      </div>
+    </section>
+
+    <div v-if="print.amountInWords" class="mt-4 text-right">
+      <span class="font-semibold">Amount in words:</span>
+      {{ doc.grandTotalInWords }}
+    </div>
+
+    <section class="mt-8" v-if="doc.terms">
+      <h3 class="font-semibold">Notes</h3>
+      <p class="mt-1 whitespace-pre-line">{{ doc.terms }}</p>
+    </section>
+
+    <section
+      class="mt-8"
+      v-if="print.displaytermsandconditions && print.termsAndConditions"
+    >
+      <h3 class="font-semibold">Terms / Banking Details</h3>
+      <p class="mt-1 whitespace-pre-line">{{ print.termsAndConditions }}</p>
+    </section>
+  </footer>
+</main>

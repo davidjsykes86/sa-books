@@ -41,7 +41,7 @@ const printSettingsFields = [
   'displaytermsandconditions',
   'termsAndConditions',
 ];
-const accountingSettingsFields = ['gstin', 'taxId'];
+const accountingSettingsFields = ['gstin', 'taxId', 'vatRegistered', 'vatNumber', 'companyRegNo'];
 
 export async function getPrintTemplatePropValues(
   doc: Doc
@@ -302,7 +302,7 @@ function getGrandTotalInWords(total: number) {
 
   if (decimalCents !== 0) {
     spelledOutDecimal =
-      ` ${t`and`} ` + convertThreeDigitNumber(decimalCents) + ` ${t`Paisa`}`;
+      ` ${t`and`} ` + convertThreeDigitNumber(decimalCents) + ` ${t`Cents`}`;
   }
 
   return `${spelledOutInteger}${spelledOutDecimal} ${t`only`}`;

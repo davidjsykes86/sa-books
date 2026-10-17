@@ -212,6 +212,16 @@ export class Party extends Doc {
   validations: ValidationMap = {
     email: validateEmail,
     phone: validatePhoneNumber,
+    taxId: (value: DocValue) => {
+      if (!value) {
+        return;
+      }
+      if (!/^4\d{9}$/.test(String(value).trim())) {
+        throw new ValidationError(
+          this.fyo.t`VAT number must be 10 digits starting with 4.`
+        );
+      }
+    },
     code: async (value: DocValue) => {
       if (!value) {
         return;

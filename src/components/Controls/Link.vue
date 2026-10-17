@@ -69,8 +69,17 @@ export default {
 
       const schema = fyo.schemaMap[schemaName];
 
+      // SA: if the target has an account code (e.g. Party ABC001),
+      // show it in the dropdown so it can be searched by code.
+      const hasCode = !!schema.fields?.some((f) => f.fieldname === 'code');
+
       const fields = [
-        ...new Set(['name', schema.titleField, this.df.groupBy]),
+        ...new Set([
+          'name',
+          schema.titleField,
+          this.df.groupBy,
+          hasCode ? 'code' : null,
+        ]),
       ].filter(Boolean);
 
       const results = await fyo.db.getAll(schemaName, {
@@ -80,7 +89,9 @@ export default {
 
       return (this.results = results
         .map((r) => {
-          const option = { label: r[schema.titleField], value: r.name };
+          const title = r[schema.titleField];
+          const label = hasCode && r.code ? `${r.code}  ${title}` : title;
+          const option = { label, value: r.name };
           if (this.df.groupBy) {
             option.group = r[this.df.groupBy];
           }
