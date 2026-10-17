@@ -18,6 +18,13 @@
       "section": "Default"
     },
     {
+      "fieldname": "code",
+      "label": "Account Code",
+      "fieldtype": "Data",
+      "placeholder": "ABC001",
+      "section": "Default"
+    },
+    {
       "fieldname": "role",
       "label": "Role",
       "fieldtype": "Select",
@@ -74,7 +81,7 @@
       "label": "Currency",
       "fieldtype": "Link",
       "target": "Currency",
-      "placeholder": "INR",
+      "placeholder": "ZAR",
       "create": true,
       "section": "Billing"
     },
@@ -105,8 +112,9 @@
     },
     {
       "fieldname": "taxId",
-      "label": "Tax ID",
+      "label": "VAT Number",
       "fieldtype": "Data",
+      "placeholder": "4xxxxxxxxx",
       "section": "Billing"
     },
     {
@@ -117,6 +125,7 @@
     }
   ],
   "quickEditFields": [
+    "code",
     "email",
     "phone",
     "address",
@@ -126,5 +135,5 @@
     "role",
     "taxId"
   ],
-  "keywordFields": ["name", "email", "role"]
+  "keywordFields": ["name", "code", "email", "role"]
 }
