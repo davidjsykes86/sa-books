@@ -1,0 +1,72 @@
+{
+  "name": "JournalBatchLine",
+  "label": "Journal Batch Line",
+  "isChild": true,
+  "fields": [
+    {
+      "fieldname": "date",
+      "label": "Date",
+      "fieldtype": "Date",
+      "required": true
+    },
+    {
+      "fieldname": "reference",
+      "label": "Reference",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "account",
+      "label": "GL Account",
+      "fieldtype": "Link",
+      "target": "Account"
+    },
+    {
+      "fieldname": "party",
+      "label": "Customer / Supplier",
+      "fieldtype": "Link",
+      "target": "Party"
+    },
+    {
+      "fieldname": "description",
+      "label": "Description",
+      "fieldtype": "Data"
+    },
+    {
+      "fieldname": "debit",
+      "label": "Debit (incl.)",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "credit",
+      "label": "Credit (incl.)",
+      "fieldtype": "Currency"
+    },
+    {
+      "fieldname": "contraAccount",
+      "label": "Contra Account",
+      "fieldtype": "Link",
+      "target": "Account"
+    },
+    {
+      "fieldname": "tax",
+      "label": "VAT Code",
+      "fieldtype": "Link",
+      "target": "Tax"
+    },
+    {
+      "fieldname": "vatAmount",
+      "label": "VAT",
+      "fieldtype": "Currency",
+      "readOnly": true
+    }
+  ],
+  "tableFields": [
+    "date",
+    "account",
+    "party",
+    "debit",
+    "credit",
+    "contraAccount",
+    "tax"
+  ]
+}

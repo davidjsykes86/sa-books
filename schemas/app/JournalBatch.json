@@ -1,0 +1,65 @@
+{
+  "name": "JournalBatch",
+  "label": "Journal Batch",
+  "naming": "autoincrement",
+  "isSubmittable": true,
+  "fields": [
+    {
+      "fieldname": "name",
+      "label": "Batch No",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "batchType",
+      "label": "Journal Type",
+      "fieldtype": "Select",
+      "options": [
+        { "value": "General", "label": "General Journal" },
+        { "value": "Customer", "label": "Customer Journal" },
+        { "value": "Supplier", "label": "Supplier Journal" }
+      ],
+      "default": "General",
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "date",
+      "label": "Batch Date",
+      "fieldtype": "Date",
+      "required": true,
+      "section": "Default"
+    },
+    {
+      "fieldname": "lines",
+      "label": "Lines",
+      "fieldtype": "Table",
+      "target": "JournalBatchLine",
+      "required": true,
+      "section": "Lines"
+    },
+    {
+      "fieldname": "totalDebit",
+      "label": "Total Debit",
+      "fieldtype": "Currency",
+      "readOnly": true,
+      "section": "Totals"
+    },
+    {
+      "fieldname": "totalCredit",
+      "label": "Total Credit",
+      "fieldtype": "Currency",
+      "readOnly": true,
+      "section": "Totals"
+    },
+    {
+      "fieldname": "remarks",
+      "label": "Remarks",
+      "fieldtype": "Text",
+      "section": "Totals"
+    }
+  ],
+  "keywordFields": ["name", "batchType"]
+}

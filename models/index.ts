@@ -9,6 +9,8 @@ import { JournalEntry } from './baseModels/JournalEntry/JournalEntry';
 import { JournalEntryAccount } from './baseModels/JournalEntryAccount/JournalEntryAccount';
 import { CashbookBatch } from './baseModels/CashbookBatch/CashbookBatch';
 import { CashbookLine } from './baseModels/CashbookBatch/CashbookLine';
+import { JournalBatch } from './baseModels/JournalBatch/JournalBatch';
+import { JournalBatchLine } from './baseModels/JournalBatch/JournalBatchLine';
 import { Misc } from './baseModels/Misc';
 import { Party } from './baseModels/Party/Party';
 import { LoyaltyProgram } from './baseModels/LoyaltyProgram/LoyaltyProgram';
@@ -76,6 +78,8 @@ export const models = {
   JournalEntryAccount,
   CashbookBatch,
   CashbookLine,
+  JournalBatch,
+  JournalBatchLine,
   Misc,
   Lead,
   Party,

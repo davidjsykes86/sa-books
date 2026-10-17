@@ -271,7 +271,7 @@ function getCompleteSidebar(): SidebarConfig {
       label: t`Common`,
       name: 'common-entries',
       icon: 'common-entries',
-      route: '/list/JournalEntry',
+      route: '/list/CashbookBatch',
       items: [
         {
           label: t`Cashbook`,
@@ -280,10 +280,10 @@ function getCompleteSidebar(): SidebarConfig {
           schemaName: 'CashbookBatch',
         },
         {
-          label: t`Journal Entry`,
-          name: 'journal-entry',
-          route: '/list/JournalEntry',
-          schemaName: 'JournalEntry',
+          label: t`Journals`,
+          name: 'journal-batches',
+          route: '/list/JournalBatch',
+          schemaName: 'JournalBatch',
         },
         {
           label: t`Party`,

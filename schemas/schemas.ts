@@ -15,6 +15,8 @@ import JournalEntry from './app/JournalEntry.json';
 import JournalEntryAccount from './app/JournalEntryAccount.json';
 import CashbookBatch from './app/CashbookBatch.json';
 import CashbookLine from './app/CashbookLine.json';
+import JournalBatch from './app/JournalBatch.json';
+import JournalBatchLine from './app/JournalBatchLine.json';
 import Misc from './app/Misc.json';
 import NumberSeries from './app/NumberSeries.json';
 import SerialNumberSeries from './app/SerialNumberSeries.json';
@@ -140,6 +142,8 @@ export const appSchemas: Schema[] | SchemaStub[] = [
   JournalEntryAccount as Schema,
   CashbookBatch as Schema,
   CashbookLine as Schema,
+  JournalBatch as Schema,
+  JournalBatchLine as Schema,
 
   Invoice as Schema,
   ItemEnquiry as Schema,
