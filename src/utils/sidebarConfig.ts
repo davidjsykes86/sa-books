@@ -1,9 +1,13 @@
 import { t } from 'fyo';
+import { ensureCurrentPeriods } from 'models/baseModels/AccountingPeriod/periods';
 import { routeFilters } from 'src/utils/filters';
 import { fyo } from '../initFyo';
 import { SidebarConfig, SidebarItem, SidebarRoot } from './types';
 
 export function getSidebarConfig(): SidebarConfig {
+  // SA: make sure the current financial year's periods exist.
+  ensureCurrentPeriods(fyo).catch(() => null);
+
   const sideBar = getCompleteSidebar();
   return getFilteredSidebar(sideBar);
 }
@@ -318,6 +322,12 @@ function getCompleteSidebar(): SidebarConfig {
           name: 'taxes',
           route: '/list/Tax',
           schemaName: 'Tax',
+        },
+        {
+          label: t`Accounting Periods`,
+          name: 'accounting-periods',
+          route: '/list/AccountingPeriod',
+          schemaName: 'AccountingPeriod',
         },
         {
           label: t`Import Wizard`,

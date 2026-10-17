@@ -33,6 +33,7 @@ import { SalesQuoteItem } from './baseModels/SalesQuoteItem/SalesQuoteItem';
 import { SetupWizard } from './baseModels/SetupWizard/SetupWizard';
 import { ItemGroup } from './baseModels/ItemGroup/ItemGroup';
 import { Tax } from './baseModels/Tax/Tax';
+import { AccountingPeriod } from './baseModels/AccountingPeriod/AccountingPeriod';
 import { TaxSummary } from './baseModels/TaxSummary/TaxSummary';
 import { Batch } from './inventory/Batch';
 import { InventorySettings } from './inventory/InventorySettings';
@@ -97,6 +98,7 @@ export const models = {
   SetupWizard,
   PrintTemplate,
   Tax,
+  AccountingPeriod,
   TaxSummary,
   // Inventory Models
   InventorySettings,

@@ -1,0 +1,722 @@
+﻿===== schemas\schemas.ts
+import Account from './app/Account.json';
+import AccountingLedgerEntry from './app/AccountingLedgerEntry.json';
+import AccountingSettings from './app/AccountingSettings.json';
+import Address from './app/Address.json';
+import Batch from './app/Batch.json';
+import BatchSeries from './app/BatchSeries.json';
+import Color from './app/Color.json';
+import Currency from './app/Currency.json';
+import Defaults from './app/Defaults.json';
+import GetStarted from './app/GetStarted.json';
+import Invoice from './app/Invoice.json';
+import InvoiceItem from './app/InvoiceItem.json';
+import Item from './app/Item.json';
+import JournalEntry from './app/JournalEntry.json';
+import JournalEntryAccount from './app/JournalEntryAccount.json';
+import Misc from './app/Misc.json';
+import NumberSeries from './app/NumberSeries.json';
+import SerialNumberSeries from './app/SerialNumberSeries.json';
+import Party from './app/Party.json';
+import Lead from './app/Lead.json';
+import LoyaltyProgram from './app/LoyaltyProgram.json';
+import LoyaltyPointEntry from './app/LoyaltyPointEntry.json';
+import CollectionRulesItems from './app/CollectionRulesItems.json';
+import CouponCode from './app/CouponCode.json';
+import AppliedCouponCodes from './app/AppliedCouponCodes.json';
+import Payment from './app/Payment.json';
+import PaymentMethod from './app/PaymentMethod.json';
+import PaymentFor from './app/PaymentFor.json';
+import PriceList from './app/PriceList.json';
+import PriceListItem from './app/PriceListItem.json';
+import PricingRule from './app/PricingRule.json';
+import PricingRuleItem from './app/PricingRuleItem.json';
+import PricingRuleDetail from './app/PricingRuleDetail.json';
+import PrintSettings from './app/PrintSettings.json';
+import PrintTemplate from './app/PrintTemplate.json';
+import PurchaseInvoice from './app/PurchaseInvoice.json';
+import PurchaseInvoiceItem from './app/PurchaseInvoiceItem.json';
+import SalesInvoice from './app/SalesInvoice.json';
+import SalesInvoiceItem from './app/SalesInvoiceItem.json';
+import SalesQuote from './app/SalesQuote.json';
+import SalesQuoteItem from './app/SalesQuoteItem.json';
+import SetupWizard from './app/SetupWizard.json';
+import Tax from './app/Tax.json';
+import TaxDetail from './app/TaxDetail.json';
+import TaxSummary from './app/TaxSummary.json';
+import UOM from './app/UOM.json';
+import InventorySettings from './app/inventory/InventorySettings.json';
+import Location from './app/inventory/Location.json';
+import PurchaseReceipt from './app/inventory/PurchaseReceipt.json';
+import PurchaseReceiptItem from './app/inventory/PurchaseReceiptItem.json';
+import SerialNumber from './app/inventory/SerialNumber.json';
+import Shipment from './app/inventory/Shipment.json';
+import ShipmentItem from './app/inventory/ShipmentItem.json';
+import StockLedgerEntry from './app/inventory/StockLedgerEntry.json';
+import StockMovement from './app/inventory/StockMovement.json';
+import StockMovementItem from './app/inventory/StockMovementItem.json';
+import StockTransfer from './app/inventory/StockTransfer.json';
+import StockTransferItem from './app/inventory/StockTransferItem.json';
+import UOMConversionItem from './app/inventory/UOMConversionItem.json';
+import CustomField from './core/CustomField.json';
+import CustomForm from './core/CustomForm.json';
+import PatchRun from './core/PatchRun.json';
+import SingleValue from './core/SingleValue.json';
+import SystemSettings from './core/SystemSettings.json';
+import base from './meta/base.json';
+import child from './meta/child.json';
+import submittable from './meta/submittable.json';
+import tree from './meta/tree.json';
+import CashDenominations from './app/inventory/Point of Sale/CashDenominations.json';
+import ClosingAmounts from './app/inventory/Point of Sale/ClosingAmounts.json';
+import ClosingCash from './app/inventory/Point of Sale/ClosingCash.json';
+import DefaultCashDenominations from './app/inventory/Point of Sale/DefaultCashDenominations.json';
+import OpeningAmounts from './app/inventory/Point of Sale/OpeningAmounts.json';
+import OpeningCash from './app/inventory/Point of Sale/OpeningCash.json';
+import POSSettings from './app/inventory/Point of Sale/POSSettings.json';
+import POSProfile from './app/POSProfile.json';
+import POSOpeningShift from './app/inventory/Point of Sale/POSOpeningShift.json';
+import POSClosingShift from './app/inventory/Point of Sale/POSClosingShift.json';
+import POSShiftAmounts from './app/inventory/Point of Sale/POSShiftAmounts.json';
+import ERPNextSyncSettings from './app/ERPNextSyncSettings.json';
+import ERPNextSyncQueue from './app/ERPNextSyncQueue.json';
+import FetchFromERPNextQueue from './app/FetchFromERPNextQueue.json';
+import IntegrationErrorLog from './app/IntegrationErrorLog.json';
+import ItemGroup from './app/ItemGroup.json';
+import { Schema, SchemaStub } from './types';
+import ItemEnquiry from './app/ItemEnquiry.json';
+
+export const coreSchemas: Schema[] = [
+  PatchRun as Schema,
+  SingleValue as Schema,
+  SystemSettings as Schema,
+];
+
+export const metaSchemas: SchemaStub[] = [
+  base as SchemaStub,
+  child as SchemaStub,
+  submittable as SchemaStub,
+  tree as SchemaStub,
+];
+
+export const appSchemas: Schema[] | SchemaStub[] = [
+  Misc as Schema,
+  SetupWizard as Schema,
+  GetStarted as Schema,
+  PrintTemplate as Schema,
+
+  Color as Schema,
+  Currency as Schema,
+  Defaults as Schema,
+  NumberSeries as Schema,
+  SerialNumberSeries as Schema,
+  BatchSeries as Schema,
+
+  PrintSettings as Schema,
+
+  Account as Schema,
+  AccountingSettings as Schema,
+  AccountingLedgerEntry as Schema,
+
+  Party as Schema,
+  Lead as Schema,
+  Address as Schema,
+  ItemGroup as Schema,
+  Item as Schema,
+  UOM as Schema,
+  UOMConversionItem as Schema,
+
+  LoyaltyProgram as Schema,
+  LoyaltyPointEntry as Schema,
+  CollectionRulesItems as Schema,
+
+  Payment as Schema,
+  PaymentMethod as Schema,
+  PaymentFor as Schema,
+
+  JournalEntry as Schema,
+  JournalEntryAccount as Schema,
+
+  Invoice as Schema,
+  ItemEnquiry as Schema,
+  SalesInvoice as Schema,
+  PurchaseInvoice as Schema,
+  SalesQuote as Schema,
+
+  InvoiceItem as Schema,
+  SalesInvoiceItem as SchemaStub,
+  PurchaseInvoiceItem as SchemaStub,
+  SalesQuoteItem as SchemaStub,
+  CouponCode as Schema,
+  AppliedCouponCodes as Schema,
+
+  PriceList as Schema,
+  PriceListItem as SchemaStub,
+
+  PricingRule as Schema,
+  PricingRuleItem as SchemaStub,
+  PricingRuleDetail as SchemaStub,
+
+  Tax as Schema,
+  TaxDetail as Schema,
+  TaxSummary as Schema,
+
+  InventorySettings as Schema,
+  Location as Schema,
+  StockLedgerEntry as Schema,
+  StockMovement as Schema,
+  StockMovementItem as Schema,
+
+  StockTransfer as Schema,
+  StockTransferItem as Schema,
+  Shipment as Schema,
+  ShipmentItem as Schema,
+  PurchaseReceipt as Schema,
+  PurchaseReceiptItem as Schema,
+
+  Batch as Schema,
+  SerialNumber as Schema,
+
+  CustomForm as Schema,
+  CustomField as Schema,
+
+  CashDenominations as Schema,
+  ClosingAmounts as Schema,
+  ClosingCash as Schema,
+  DefaultCashDenominations as Schema,
+  OpeningAmounts as Schema,
+  OpeningCash as Schema,
+  POSSettings as Schema,
+  POSProfile as Schema,
+  POSOpeningShift as Schema,
+  POSClosingShift as Schema,
+  POSShiftAmounts as Schema,
+
+  ERPNextSyncSettings as Schema,
+  ERPNextSyncQueue as Schema,
+  FetchFromERPNextQueue as Schema,
+
+  IntegrationErrorLog as Schema,
+];
+===== models\index.ts
+import { ModelMap } from 'fyo/model/types';
+import { Account } from './baseModels/Account/Account';
+import { AccountingLedgerEntry } from './baseModels/AccountingLedgerEntry/AccountingLedgerEntry';
+import { AccountingSettings } from './baseModels/AccountingSettings/AccountingSettings';
+import { Address } from './baseModels/Address/Address';
+import { Defaults } from './baseModels/Defaults/Defaults';
+import { Item } from './baseModels/Item/Item';
+import { JournalEntry } from './baseModels/JournalEntry/JournalEntry';
+import { JournalEntryAccount } from './baseModels/JournalEntryAccount/JournalEntryAccount';
+import { Misc } from './baseModels/Misc';
+import { Party } from './baseModels/Party/Party';
+import { LoyaltyProgram } from './baseModels/LoyaltyProgram/LoyaltyProgram';
+import { LoyaltyPointEntry } from './baseModels/LoyaltyPointEntry/LoyaltyPointEntry';
+import { CollectionRulesItems } from './baseModels/CollectionRulesItems/CollectionRulesItems';
+import { Lead } from './baseModels/Lead/Lead';
+import { AppliedCouponCodes } from './baseModels/AppliedCouponCodes/AppliedCouponCodes';
+import { CouponCode } from './baseModels/CouponCode/CouponCode';
+import { Payment } from './baseModels/Payment/Payment';
+import { PaymentMethod } from './baseModels/PaymentMethod/PaymentMethod';
+import { PaymentFor } from './baseModels/PaymentFor/PaymentFor';
+import { PriceList } from './baseModels/PriceList/PriceList';
+import { PriceListItem } from './baseModels/PriceList/PriceListItem';
+import { PricingRule } from './baseModels/PricingRule/PricingRule';
+import { PricingRuleItem } from './baseModels/PricingRuleItem/PricingRuleItem';
+import { PrintSettings } from './baseModels/PrintSettings/PrintSettings';
+import { PrintTemplate } from './baseModels/PrintTemplate';
+import { PurchaseInvoice } from './baseModels/PurchaseInvoice/PurchaseInvoice';
+import { PurchaseInvoiceItem } from './baseModels/PurchaseInvoiceItem/PurchaseInvoiceItem';
+import { SalesInvoice } from './baseModels/SalesInvoice/SalesInvoice';
+import { SalesInvoiceItem } from './baseModels/SalesInvoiceItem/SalesInvoiceItem';
+import { SalesQuote } from './baseModels/SalesQuote/SalesQuote';
+import { SalesQuoteItem } from './baseModels/SalesQuoteItem/SalesQuoteItem';
+import { SetupWizard } from './baseModels/SetupWizard/SetupWizard';
+import { ItemGroup } from './baseModels/ItemGroup/ItemGroup';
+import { Tax } from './baseModels/Tax/Tax';
+import { TaxSummary } from './baseModels/TaxSummary/TaxSummary';
+import { Batch } from './inventory/Batch';
+import { InventorySettings } from './inventory/InventorySettings';
+import { Location } from './inventory/Location';
+import { PurchaseReceipt } from './inventory/PurchaseReceipt';
+import { PurchaseReceiptItem } from './inventory/PurchaseReceiptItem';
+import { SerialNumber } from './inventory/SerialNumber';
+import { Shipment } from './inventory/Shipment';
+import { ShipmentItem } from './inventory/ShipmentItem';
+import { StockLedgerEntry } from './inventory/StockLedgerEntry';
+import { StockMovement } from './inventory/StockMovement';
+import { StockMovementItem } from './inventory/StockMovementItem';
+import { ClosingAmounts } from './inventory/Point of Sale/ClosingAmounts';
+import { ClosingCash } from './inventory/Point of Sale/ClosingCash';
+import { OpeningAmounts } from './inventory/Point of Sale/OpeningAmounts';
+import { OpeningCash } from './inventory/Point of Sale/OpeningCash';
+import { POSSettings } from './inventory/Point of Sale/POSSettings';
+import { POSProfile } from './baseModels/POSProfile/PosProfile';
+import { POSOpeningShift } from './inventory/Point of Sale/POSOpeningShift';
+import { POSClosingShift } from './inventory/Point of Sale/POSClosingShift';
+import { ERPNextSyncSettings } from './baseModels/ERPNextSyncSettings/ERPNextSyncSettings';
+import { ERPNextSyncQueue } from './baseModels/ERPNextSyncQueue/ERPNextSyncQueue';
+import { FetchFromERPNextQueue } from './baseModels/FetchFromERPNextQueue/FetchFromERPNextQueue';
+import { IntegrationErrorLog } from './baseModels/IntegrationErrorLog/IntegrationErrorLog';
+import { ItemEnquiry } from './baseModels/ItemEnquiry/ItemEnquiry';
+
+export const models = {
+  Account,
+  AccountingLedgerEntry,
+  AccountingSettings,
+  Address,
+  Batch,
+  Defaults,
+  Item,
+  ItemGroup,
+  ItemEnquiry,
+  JournalEntry,
+  JournalEntryAccount,
+  Misc,
+  Lead,
+  Party,
+  LoyaltyProgram,
+  LoyaltyPointEntry,
+  CollectionRulesItems,
+  CouponCode,
+  Payment,
+  PaymentMethod,
+  PaymentFor,
+  PrintSettings,
+  PriceList,
+  PriceListItem,
+  PricingRule,
+  PricingRuleItem,
+  PurchaseInvoice,
+  PurchaseInvoiceItem,
+  SalesInvoice,
+  SalesInvoiceItem,
+  AppliedCouponCodes,
+  SalesQuote,
+  SalesQuoteItem,
+  SerialNumber,
+  SetupWizard,
+  PrintTemplate,
+  Tax,
+  TaxSummary,
+  // Inventory Models
+  InventorySettings,
+  StockMovement,
+  StockMovementItem,
+  StockLedgerEntry,
+  Location,
+  Shipment,
+  ShipmentItem,
+  PurchaseReceipt,
+  PurchaseReceiptItem,
+  // POS Models
+  ClosingAmounts,
+  ClosingCash,
+  OpeningAmounts,
+  OpeningCash,
+  POSSettings,
+  POSProfile,
+  POSOpeningShift,
+  POSClosingShift,
+  // ERPNext Sync
+  ERPNextSyncSettings,
+  ERPNextSyncQueue,
+  FetchFromERPNextQueue,
+  // Error Log
+  IntegrationErrorLog,
+} as ModelMap;
+
+export async function getRegionalModels(
+  countryCode: string
+): Promise<ModelMap> {
+  if (countryCode !== 'in') {
+    return {};
+  }
+
+  const { Address } = await import('./regionalModels/in/Address');
+  const { Party } = await import('./regionalModels/in/Party');
+  return { Address, Party };
+}
+===== src\utils\sidebarConfig.ts
+import { t } from 'fyo';
+import { routeFilters } from 'src/utils/filters';
+import { fyo } from '../initFyo';
+import { SidebarConfig, SidebarItem, SidebarRoot } from './types';
+
+export function getSidebarConfig(): SidebarConfig {
+  const sideBar = getCompleteSidebar();
+  return getFilteredSidebar(sideBar);
+}
+
+function getFilteredSidebar(sideBar: SidebarConfig): SidebarConfig {
+  return sideBar.filter((root) => {
+    root.items = root.items?.filter((item) => {
+      if (item.hidden !== undefined) {
+        return !item.hidden();
+      }
+
+      return true;
+    });
+
+    if (root.hidden !== undefined) {
+      return !root.hidden();
+    }
+
+    return true;
+  });
+}
+
+function getRegionalSidebar(): SidebarRoot[] {
+  const hasGstin = !!fyo.singles?.AccountingSettings?.gstin;
+  if (!hasGstin) {
+    return [];
+  }
+
+  return [
+    {
+      label: t`GST`,
+      name: 'gst',
+      icon: 'gst',
+      route: '/report/GSTR1',
+      items: [
+        {
+          label: t`GSTR1`,
+          name: 'gstr1',
+          route: '/report/GSTR1',
+        },
+        {
+          label: t`GSTR2`,
+          name: 'gstr2',
+          route: '/report/GSTR2',
+        },
+      ],
+    },
+  ];
+}
+
+function getInventorySidebar(): SidebarRoot[] {
+  const hasInventory = !!fyo.singles.AccountingSettings?.enableInventory;
+  if (!hasInventory) {
+    return [];
+  }
+
+  return [
+    {
+      label: t`Inventory`,
+      name: 'inventory',
+      icon: 'inventory',
+      iconSize: '18',
+      route: '/list/StockMovement',
+      items: [
+        {
+          label: t`Stock Movement`,
+          name: 'stock-movement',
+          route: '/list/StockMovement',
+          schemaName: 'StockMovement',
+        },
+        {
+          label: t`Shipment`,
+          name: 'shipment',
+          route: '/list/Shipment',
+          schemaName: 'Shipment',
+        },
+        {
+          label: t`Purchase Receipt`,
+          name: 'purchase-receipt',
+          route: '/list/PurchaseReceipt',
+          schemaName: 'PurchaseReceipt',
+        },
+        {
+          label: t`Stock Ledger`,
+          name: 'stock-ledger',
+          route: '/report/StockLedger',
+        },
+        {
+          label: t`Stock Balance`,
+          name: 'stock-balance',
+          route: '/report/StockBalance',
+        },
+      ],
+    },
+  ];
+}
+
+function getPOSSidebar() {
+  return {
+    label: t`POS`,
+    name: 'pos',
+    route: '/pos',
+    icon: 'pos',
+    hidden: () => !fyo.singles.InventorySettings?.enablePointOfSale,
+  };
+}
+
+function getReportSidebar() {
+  return {
+    label: t`Reports`,
+    name: 'reports',
+    icon: 'reports',
+    route: '/report/GeneralLedger',
+    items: [
+      {
+        label: t`General Ledger`,
+        name: 'general-ledger',
+        route: '/report/GeneralLedger',
+      },
+      {
+        label: t`Profit And Loss`,
+        name: 'profit-and-loss',
+        route: '/report/ProfitAndLoss',
+      },
+      {
+        label: t`Balance Sheet`,
+        name: 'balance-sheet',
+        route: '/report/BalanceSheet',
+      },
+      {
+        label: t`Trial Balance`,
+        name: 'trial-balance',
+        route: '/report/TrialBalance',
+      },
+    ],
+  };
+}
+
+function getCompleteSidebar(): SidebarConfig {
+  return [
+    {
+      label: t`Get Started`,
+      name: 'get-started',
+      route: '/get-started',
+      icon: 'general',
+      iconSize: '24',
+      iconHeight: 5,
+      hidden: () => !!fyo.singles.SystemSettings?.hideGetStarted,
+    },
+    {
+      label: t`Dashboard`,
+      name: 'dashboard',
+      route: '/',
+      icon: 'dashboard',
+    },
+    {
+      label: t`Sales`,
+      name: 'sales',
+      icon: 'sales',
+      route: '/list/SalesInvoice',
+      items: [
+        {
+          label: t`Sales Quotes`,
+          name: 'sales-quotes',
+          route: '/list/SalesQuote',
+          schemaName: 'SalesQuote',
+        },
+        {
+          label: t`Sales Invoices`,
+          name: 'sales-invoices',
+          route: '/list/SalesInvoice',
+          schemaName: 'SalesInvoice',
+        },
+        {
+          label: t`Sales Payments`,
+          name: 'payments',
+          route: `/list/Payment/${t`Sales Payments`}`,
+          schemaName: 'Payment',
+          filters: routeFilters.SalesPayments,
+        },
+        {
+          label: t`Customers`,
+          name: 'customers',
+          route: `/list/Party/${t`Customers`}`,
+          schemaName: 'Party',
+          filters: routeFilters.Customers,
+        },
+        {
+          label: t`Sales Items`,
+          name: 'sales-items',
+          route: `/list/Item/${t`Sales Items`}`,
+          schemaName: 'Item',
+          filters: routeFilters.SalesItems,
+        },
+        {
+          label: t`Loyalty Program`,
+          name: 'loyalty-program',
+          route: '/list/LoyaltyProgram',
+          schemaName: 'LoyaltyProgram',
+          hidden: () => !fyo.singles.AccountingSettings?.enableLoyaltyProgram,
+        },
+        {
+          label: t`Lead`,
+          name: 'lead',
+          route: '/list/Lead',
+          schemaName: 'Lead',
+          hidden: () => !fyo.singles.AccountingSettings?.enableLead,
+        },
+        {
+          label: t`Pricing Rule`,
+          name: 'pricing-rule',
+          route: '/list/PricingRule',
+          schemaName: 'PricingRule',
+          hidden: () => !fyo.singles.AccountingSettings?.enablePricingRule,
+        },
+        {
+          label: t`Coupon Code`,
+          name: 'coupon-code',
+          route: `/list/CouponCode`,
+          schemaName: 'CouponCode',
+          hidden: () => !fyo.singles.AccountingSettings?.enableCouponCode,
+        },
+      ] as SidebarItem[],
+    },
+    {
+      label: t`Purchases`,
+      name: 'purchases',
+      icon: 'purchase',
+      route: '/list/PurchaseInvoice',
+      items: [
+        {
+          label: t`Purchase Invoices`,
+          name: 'purchase-invoices',
+          route: '/list/PurchaseInvoice',
+          schemaName: 'PurchaseInvoice',
+        },
+        {
+          label: t`Purchase Payments`,
+          name: 'payments',
+          route: `/list/Payment/${t`Purchase Payments`}`,
+          schemaName: 'Payment',
+          filters: routeFilters.PurchasePayments,
+        },
+        {
+          label: t`Suppliers`,
+          name: 'suppliers',
+          route: `/list/Party/${t`Suppliers`}`,
+          schemaName: 'Party',
+          filters: routeFilters.Suppliers,
+        },
+        {
+          label: t`Purchase Items`,
+          name: 'purchase-items',
+          route: `/list/Item/${t`Purchase Items`}`,
+          schemaName: 'Item',
+          filters: routeFilters.PurchaseItems,
+        },
+      ] as SidebarItem[],
+    },
+    {
+      label: t`Common`,
+      name: 'common-entries',
+      icon: 'common-entries',
+      route: '/list/JournalEntry',
+      items: [
+        {
+          label: t`Journal Entry`,
+          name: 'journal-entry',
+          route: '/list/JournalEntry',
+          schemaName: 'JournalEntry',
+        },
+        {
+          label: t`Party`,
+          name: 'party',
+          route: '/list/Party',
+          schemaName: 'Party',
+          filters: { role: ['in', ['Customer', 'Supplier', 'Both']] },
+        },
+        {
+          label: t`Items`,
+          name: 'common-items',
+          route: `/list/Item/${t`Items`}`,
+          schemaName: 'Item',
+          filters: { for: 'Both' },
+        },
+        {
+          label: t`Price List`,
+          name: 'price-list',
+          route: '/list/PriceList',
+          schemaName: 'PriceList',
+          hidden: () => !fyo.singles.AccountingSettings?.enablePriceList,
+        },
+      ] as SidebarItem[],
+    },
+    getReportSidebar(),
+    getInventorySidebar(),
+    getPOSSidebar(),
+    getRegionalSidebar(),
+    {
+      label: t`Setup`,
+      name: 'setup',
+      icon: 'settings',
+      route: '/chart-of-accounts',
+      items: [
+        {
+          label: t`Chart of Accounts`,
+          name: 'chart-of-accounts',
+          route: '/chart-of-accounts',
+        },
+        {
+          label: t`Tax Templates`,
+          name: 'taxes',
+          route: '/list/Tax',
+          schemaName: 'Tax',
+        },
+        {
+          label: t`Import Wizard`,
+          name: 'import-wizard',
+          route: '/import-wizard',
+        },
+        {
+          label: t`Print Templates`,
+          name: 'print-template',
+          route: `/list/PrintTemplate/${t`Print Templates`}`,
+        },
+        {
+          label: t`Customize Form`,
+          name: 'customize-form',
+          // route: `/customize-form`,
+          route: `/list/CustomForm/${t`Customize Form`}`,
+          hidden: () =>
+            !fyo.singles.AccountingSettings?.enableFormCustomization,
+        },
+        {
+          label: t`Settings`,
+          name: 'settings',
+          route: '/settings',
+        },
+      ] as SidebarItem[],
+    },
+  ].flat();
+}
+===== doc hooks
+
+fyo\model\doc.ts:130:  get isSubmitted() {
+fyo\model\doc.ts:131:    return !!this.submitted && !this.cancelled;
+fyo\model\doc.ts:134:  get isCancelled() {
+fyo\model\doc.ts:135:    return !!this.submitted && !!this.cancelled;
+fyo\model\doc.ts:159:    if (this.schema.isSubmittable && this.isCancelled) {
+fyo\model\doc.ts:163:    if (this.schema.isSubmittable && !this.isSubmitted) {
+fyo\model\doc.ts:175:    if (this.submitted) {
+fyo\model\doc.ts:179:    if (this.cancelled) {
+fyo\model\doc.ts:188:    if (isSubmittable && !!this.submitted) {
+fyo\model\doc.ts:192:    if (isSubmittable && !!this.cancelled) {
+fyo\model\doc.ts:220:    if (!!this.submitted) {
+fyo\model\doc.ts:224:    if (!!this.cancelled) {
+fyo\model\doc.ts:244:    if (!!this.cancelled) {
+fyo\model\doc.ts:248:    if (!this.submitted) {
+fyo\model\doc.ts:265:    if (!!this.schema.isSubmittable && !this.isSubmitted) {
+fyo\model\doc.ts:605:      this.submitted = false;
+fyo\model\doc.ts:606:      this.cancelled = false;
+fyo\model\doc.ts:1013:    if (!this.schema.isSubmittable || this.submitted || this.cancelled) {
+fyo\model\doc.ts:1018:    await this.setAndSync('submitted', true);
+fyo\model\doc.ts:1021:    this.fyo.telemetry.log(Verb.Submitted, this.schemaName);
+fyo\model\doc.ts:1026:    if (!this.schema.isSubmittable || !this.submitted || this.cancelled) {
+fyo\model\doc.ts:1031:    await this.setAndSync('cancelled', true);
+fyo\model\doc.ts:1034:    this.fyo.telemetry.log(Verb.Cancelled, this.schemaName);
+fyo\model\doc.ts:1039:    if (this.submitted) {
+fyo\model\doc.ts:1133:  async beforeSync() {}
+fyo\model\doc.ts:1134:  async afterSync() {}
+fyo\model\doc.ts:1135:  async beforeSubmit() {}
+fyo\model\doc.ts:1136:  async afterSubmit() {}
+fyo\model\doc.ts:1137:  async beforeRename() {}
+fyo\model\doc.ts:1138:  async afterRename() {}
+
+

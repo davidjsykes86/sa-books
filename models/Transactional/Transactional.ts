@@ -1,4 +1,6 @@
+import { t } from 'fyo';
 import { Doc } from 'fyo/model/doc';
+import { assertPeriodOpen } from 'models/baseModels/AccountingPeriod/periods';
 import { ModelNameEnum } from 'models/types';
 import { LedgerPosting } from './LedgerPosting';
 
@@ -17,6 +19,8 @@ import { LedgerPosting } from './LedgerPosting';
  * - `afterSubmit`: create the ledger entries.
  * - `afterCancel`: create reverse ledger entries.
  * - `afterDelete`: delete the normal and reversed ledger entries.
+ *
+ * SA: posting or reversing into a closed AccountingPeriod is blocked.
  */
 
 export abstract class Transactional extends Doc {
@@ -34,12 +38,60 @@ export abstract class Transactional extends Doc {
       return;
     }
 
+    await this.validatePeriodLock();
+
     const posting = await this.getPosting();
     if (posting === null) {
       return;
     }
 
     posting.validate();
+  }
+
+  /**
+   * Only checks at the moment of posting (draft -> submitted) or
+   * reversing (submitted -> cancelled), so routine re-saves of posted
+   * documents (e.g. outstanding amount updates) are not blocked.
+   *
+   * If blocked, the in-memory submitted/cancelled flag is reset so the
+   * form keeps showing the correct buttons.
+   */
+  async validatePeriodLock(): Promise<void> {
+    if (!this.submitted || !this.date) {
+      return;
+    }
+
+    let wasSubmitted = false;
+    let wasCancelled = false;
+
+    if (this.name && (await this.fyo.db.exists(this.schemaName, this.name))) {
+      const prev = (await this.fyo.db.get(this.schemaName, this.name, [
+        'submitted',
+        'cancelled',
+      ])) as { submitted?: unknown; cancelled?: unknown };
+
+      wasSubmitted = !!prev.submitted;
+      wasCancelled = !!prev.cancelled;
+    }
+
+    if (!wasSubmitted) {
+      try {
+        await assertPeriodOpen(this.fyo, this.date, t`Posting`);
+      } catch (err) {
+        this.submitted = false;
+        throw err;
+      }
+      return;
+    }
+
+    if (this.cancelled && !wasCancelled) {
+      try {
+        await assertPeriodOpen(this.fyo, this.date, t`Reversing`);
+      } catch (err) {
+        this.cancelled = false;
+        throw err;
+      }
+    }
   }
 
   async afterSubmit(): Promise<void> {

@@ -41,6 +41,7 @@ import SalesQuote from './app/SalesQuote.json';
 import SalesQuoteItem from './app/SalesQuoteItem.json';
 import SetupWizard from './app/SetupWizard.json';
 import Tax from './app/Tax.json';
+import AccountingPeriod from './app/AccountingPeriod.json';
 import TaxDetail from './app/TaxDetail.json';
 import TaxSummary from './app/TaxSummary.json';
 import UOM from './app/UOM.json';
@@ -157,6 +158,7 @@ export const appSchemas: Schema[] | SchemaStub[] = [
   PricingRuleDetail as SchemaStub,
 
   Tax as Schema,
+  AccountingPeriod as Schema,
   TaxDetail as Schema,
   TaxSummary as Schema,
 

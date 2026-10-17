@@ -1,0 +1,52 @@
+{
+  "name": "AccountingPeriod",
+  "label": "Accounting Period",
+  "naming": "manual",
+  "create": false,
+  "isSingle": false,
+  "isChild": false,
+  "isSubmittable": false,
+  "fields": [
+    {
+      "fieldname": "name",
+      "label": "Period",
+      "fieldtype": "Data",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "fiscalYear",
+      "label": "Financial Year",
+      "fieldtype": "Data",
+      "readOnly": true
+    },
+    {
+      "fieldname": "periodNumber",
+      "label": "Period No.",
+      "fieldtype": "Int",
+      "readOnly": true
+    },
+    {
+      "fieldname": "startDate",
+      "label": "Start Date",
+      "fieldtype": "Date",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "endDate",
+      "label": "End Date",
+      "fieldtype": "Date",
+      "required": true,
+      "readOnly": true
+    },
+    {
+      "fieldname": "closed",
+      "label": "Closed",
+      "fieldtype": "Check",
+      "default": false
+    }
+  ],
+  "keywordFields": ["name", "fiscalYear"],
+  "quickEditFields": ["closed"]
+}
